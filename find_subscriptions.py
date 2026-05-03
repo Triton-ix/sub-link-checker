@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from urllib.parse import urljoin
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
-import calendar
 
 class V2RaySubscriptionFinder:
     def __init__(self):
@@ -33,55 +32,40 @@ class V2RaySubscriptionFinder:
             r'config.*[\'"]?(https?://raw\.githubusercontent\.com[^\s\'"]+)[\'"]?',
         ]
 
-    # ---------- Date parsing utilities (robust day/month/year detection) ----------
     def _parse_relative_date(self, text):
-        """Parse strings like '2 days ago', '3 months ago', 'last week'"""
         text = text.lower()
         now = datetime.now()
-        # days ago
         match = re.search(r'(\d+)\s+day[s]?\s+ago', text)
         if match:
-            days = int(match.group(1))
-            return now - timedelta(days=days)
-        # months ago (approximate, using 30 days per month)
+            return now - timedelta(days=int(match.group(1)))
         match = re.search(r'(\d+)\s+month[s]?\s+ago', text)
         if match:
-            months = int(match.group(1))
-            return now - timedelta(days=months*30)
-        # years ago
+            return now - timedelta(days=int(match.group(1))*30)
         match = re.search(r'(\d+)\s+year[s]?\s+ago', text)
         if match:
-            years = int(match.group(1))
-            return now - timedelta(days=years*365)
-        # yesterday
+            return now - timedelta(days=int(match.group(1))*365)
         if 'yesterday' in text:
             return now - timedelta(days=1)
-        # today
         if 'today' in text:
             return now
         return None
 
     def _parse_absolute_date(self, date_str):
-        """Parse various absolute date formats including YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY, etc."""
         date_str = date_str.strip()
-        # Try ISO 8601 (with time and timezone)
         try:
-            # GitHub API format: 2025-04-20T12:34:56Z
             if 'T' in date_str:
                 return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
         except:
             pass
-        
-        # Common patterns
         patterns = [
-            (r'(\d{4})-(\d{1,2})-(\d{1,2})', '%Y-%m-%d'),           # 2025-04-20
-            (r'(\d{1,2})/(\d{1,2})/(\d{4})', '%m/%d/%Y'),           # 04/20/2025
-            (r'(\d{1,2})/(\d{1,2})/(\d{4})', '%d/%m/%Y'),           # 20/04/2025
-            (r'(\d{1,2})-(\d{1,2})-(\d{4})', '%m-%d-%Y'),           # 04-20-2025
-            (r'(\d{1,2})-(\d{1,2})-(\d{4})', '%d-%m-%Y'),           # 20-04-2025
-            (r'(\d{4})/(\d{1,2})/(\d{1,2})', '%Y/%m/%d'),           # 2025/04/20
-            (r'(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})', '%d %b %Y'),     # 20 Apr 2025
-            (r'([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})', '%b %d %Y'),    # Apr 20, 2025
+            (r'(\d{4})-(\d{1,2})-(\d{1,2})', '%Y-%m-%d'),
+            (r'(\d{1,2})/(\d{1,2})/(\d{4})', '%m/%d/%Y'),
+            (r'(\d{1,2})/(\d{1,2})/(\d{4})', '%d/%m/%Y'),
+            (r'(\d{1,2})-(\d{1,2})-(\d{4})', '%m-%d-%Y'),
+            (r'(\d{1,2})-(\d{1,2})-(\d{4})', '%d-%m-%Y'),
+            (r'(\d{4})/(\d{1,2})/(\d{1,2})', '%Y/%m/%d'),
+            (r'(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})', '%d %b %Y'),
+            (r'([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})', '%b %d %Y'),
         ]
         for pat, fmt in patterns:
             match = re.search(pat, date_str)
@@ -93,27 +77,19 @@ class V2RaySubscriptionFinder:
         return None
 
     def parse_date(self, date_string):
-        """Main date parser that handles both absolute and relative dates"""
         if not date_string:
             return None
-        # First check if relative
-        rel_date = self._parse_relative_date(date_string)
-        if rel_date:
-            return rel_date
-        # Then absolute
-        abs_date = self._parse_absolute_date(date_string)
-        if abs_date:
-            return abs_date
-        return None
+        rel = self._parse_relative_date(date_string)
+        if rel:
+            return rel
+        return self._parse_absolute_date(date_string)
 
     def is_within_15_days(self, date_obj):
-        """Check if given datetime is within last 15 days"""
         if not date_obj:
             return False
         now = datetime.now(date_obj.tzinfo) if date_obj.tzinfo else datetime.now()
         return (now - date_obj) <= timedelta(days=15)
 
-    # ---------- GitHub search and extraction ----------
     def search_github_repos(self, max_pages=5):
         repos = []
         search_queries = [
@@ -122,7 +98,6 @@ class V2RaySubscriptionFinder:
             'v2ray collector', 'v2ray configs daily', 'iran v2ray configs',
             'v2ray sub', 'vless subscription', 'vmess subscription',
         ]
-        
         for q in search_queries:
             for page in range(1, max_pages + 1):
                 try:
@@ -131,11 +106,11 @@ class V2RaySubscriptionFinder:
                     if resp.status_code == 200:
                         data = resp.json()
                         for repo in data.get('items', []):
-                            repo_name = repo['full_name']
-                            if repo_name not in self.seen_repos:
-                                self.seen_repos.add(repo_name)
+                            name = repo['full_name']
+                            if name not in self.seen_repos:
+                                self.seen_repos.add(name)
                                 repos.append({
-                                    'name': repo_name,
+                                    'name': name,
                                     'url': repo['html_url'],
                                     'description': repo.get('description', ''),
                                     'updated_at': repo.get('updated_at', ''),
@@ -155,12 +130,12 @@ class V2RaySubscriptionFinder:
             for link in soup.select('a[href^="/"][href*="/"]'):
                 href = link.get('href')
                 if href and '/tree/' not in href and len(href.split('/')) == 3:
-                    full_name = href.strip('/')
-                    if full_name not in self.seen_repos:
-                        self.seen_repos.add(full_name)
+                    full = href.strip('/')
+                    if full not in self.seen_repos:
+                        self.seen_repos.add(full)
                         repos.append({
-                            'name': full_name,
-                            'url': f'https://github.com/{full_name}',
+                            'name': full,
+                            'url': f'https://github.com/{full}',
                             'description': '',
                             'updated_at': ''
                         })
@@ -168,8 +143,8 @@ class V2RaySubscriptionFinder:
             print(f"Scraping error: {e}")
 
     def _has_iran_or_persian(self, text, soup):
-        lower_text = text.lower()
-        if any(kw in lower_text for kw in self.iran_keywords):
+        lower = text.lower()
+        if any(kw in lower for kw in self.iran_keywords):
             return True
         if re.search(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]', text):
             return True
@@ -179,7 +154,6 @@ class V2RaySubscriptionFinder:
         return False
 
     def _get_last_commit_date(self, repo_url):
-        """Get last commit date of the repository via GitHub API"""
         try:
             api_url = repo_url.replace('github.com', 'api.github.com/repos')
             commits_url = f'{api_url}/commits?per_page=1'
@@ -194,18 +168,14 @@ class V2RaySubscriptionFinder:
         return None
 
     def _get_last_update_from_page(self, soup):
-        """Extract relative-time or any date-like element from GitHub HTML page"""
-        # Find <relative-time> tag used by GitHub
         rel_time = soup.find('relative-time')
         if rel_time and rel_time.get('datetime'):
             return self.parse_date(rel_time['datetime'])
-        # Look for any text containing date patterns
         for text in soup.stripped_strings:
             if 'ago' in text or 'yesterday' in text or 'today' in text:
                 d = self.parse_date(text)
                 if d:
                     return d
-            # Try to find absolute dates
             d = self._parse_absolute_date(text)
             if d:
                 return d
@@ -214,28 +184,26 @@ class V2RaySubscriptionFinder:
     def _extract_links_from_repo(self, repo_url):
         links = set()
         repo_path = repo_url.replace('https://github.com/', '')
-        paths_to_check = [
+        paths = [
             'README.md', 'README_Fa.md', 'README_fa.md', 'README.fa.md',
             'subscription.txt', 'sub.txt', 'config.txt', 'v2ray.txt',
             'links.txt', 'urls.txt', 'sub.json', 'config.json', 'subscription.json',
             'README', 'docs/README.md', 'docs/subscription.txt'
         ]
-        
         for branch in ['main', 'master']:
-            for path in paths_to_check:
-                raw_url = f'https://raw.githubusercontent.com/{repo_path}/{branch}/{path}'
+            for path in paths:
+                raw = f'https://raw.githubusercontent.com/{repo_path}/{branch}/{path}'
                 try:
-                    resp = self.session.get(raw_url, timeout=10)
+                    resp = self.session.get(raw, timeout=10)
                     if resp.status_code == 200:
                         content = resp.text
-                        for pattern in self.sub_patterns:
-                            matches = re.findall(pattern, content, re.IGNORECASE)
+                        for pat in self.sub_patterns:
+                            matches = re.findall(pat, content, re.IGNORECASE)
                             for m in matches:
                                 if isinstance(m, tuple):
                                     m = m[0] if m else ''
-                                if m and m.startswith(('http://', 'https://')):
-                                    if 'raw.githubusercontent.com' in m:
-                                        links.add(m)
+                                if m and 'raw.githubusercontent.com' in m:
+                                    links.add(m)
                 except:
                     continue
         return links
@@ -244,123 +212,86 @@ class V2RaySubscriptionFinder:
         links = set()
         api_base = repo_url.replace('github.com', 'api.github.com/repos')
         try:
-            repo_info = self.session.get(api_base, timeout=10)
-            if repo_info.status_code == 200:
-                default_branch = repo_info.json().get('default_branch', 'main')
-            else:
-                default_branch = 'main'
+            resp = self.session.get(api_base, timeout=10)
+            default_branch = resp.json().get('default_branch', 'main') if resp.status_code == 200 else 'main'
         except:
             default_branch = 'main'
-        
-        dirs_to_scan = ['', 'config', 'subscription', 'sub', 'links', 'docs', 'data', 'files']
-        for subdir in dirs_to_scan:
-            contents_url = f'{api_base}/contents/{subdir}?ref={default_branch}'
+        dirs = ['', 'config', 'subscription', 'sub', 'links', 'docs', 'data', 'files']
+        for subdir in dirs:
+            url = f'{api_base}/contents/{subdir}?ref={default_branch}'
             try:
-                resp = self.session.get(contents_url, timeout=10)
+                resp = self.session.get(url, timeout=10)
                 if resp.status_code == 200:
                     items = resp.json()
                     if isinstance(items, list):
                         for item in items:
-                            if item['type'] == 'file':
-                                fname = item['name'].lower()
-                                if fname.endswith(('.txt', '.json', '.yaml', '.yml', '.md', '.link')):
-                                    raw_url = item['download_url']
-                                    if raw_url:
-                                        file_resp = self.session.get(raw_url, timeout=10)
-                                        if file_resp.status_code == 200:
-                                            content = file_resp.text
-                                            for pattern in self.sub_patterns:
-                                                matches = re.findall(pattern, content, re.IGNORECASE)
-                                                for m in matches:
-                                                    if isinstance(m, tuple):
-                                                        m = m[0] if m else ''
-                                                    if m and 'raw.githubusercontent.com' in m:
-                                                        links.add(m)
+                            if item['type'] == 'file' and item['name'].lower().endswith(('.txt','.json','.yaml','.yml','.md','.link')):
+                                file_resp = self.session.get(item['download_url'], timeout=10)
+                                if file_resp.status_code == 200:
+                                    for pat in self.sub_patterns:
+                                        matches = re.findall(pat, file_resp.text, re.IGNORECASE)
+                                        for m in matches:
+                                            if isinstance(m, tuple):
+                                                m = m[0] if m else ''
+                                            if m and 'raw.githubusercontent.com' in m:
+                                                links.add(m)
             except:
                 continue
         return links
 
     def check_repository(self, repo_info):
         repo_url = repo_info['url']
-        
-        # Condition 1: GitHub (already true)
         try:
             resp = self.session.get(repo_url, timeout=10)
             if resp.status_code != 200:
                 return False
             soup = BeautifulSoup(resp.text, 'html.parser')
             page_text = soup.get_text()
-            
-            # Condition 2: Iran / Persian reference
             if not self._has_iran_or_persian(page_text, soup):
                 return False
-            
-            # Condition 3: recent update (within 15 days) - robust date parsing
-            # Try API first
             last_date = self._get_last_commit_date(repo_url)
             if not last_date:
-                # Fallback to parsing from HTML page
                 last_date = self._get_last_update_from_page(soup)
             if not last_date:
-                # Use the updated_at from search result
                 last_date = self.parse_date(repo_info.get('updated_at', ''))
-            
             if not last_date or not self.is_within_15_days(last_date):
                 return False
-            
-            # Extract subscription links
-            links = set()
-            links.update(self._extract_links_from_repo(repo_url))
+            links = self._extract_links_from_repo(repo_url)
             links.update(self._scan_repo_contents(repo_url))
-            
             if links:
                 self.subscription_links.update(links)
                 print(f"Found {len(links)} links in {repo_url} (last update: {last_date})")
                 return True
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Error checking {repo_url}: {e}")
         return False
 
     def find_valid_subscriptions(self):
-        print("Searching GitHub...")
+        print("Searching GitHub for Iran-related V2Ray subscription repos...")
         repos = self.search_github_repos(max_pages=5)
-        print(f"Found {len(repos)} candidate repositories. Checking conditions...")
-        
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(self.check_repository, repo): repo for repo in repos}
-            for future in as_completed(futures):
+        print(f"Found {len(repos)} candidate repositories. Checking...")
+        with ThreadPoolExecutor(max_workers=5) as ex:
+            futures = {ex.submit(self.check_repository, repo): repo for repo in repos}
+            for f in as_completed(futures):
                 try:
-                    future.result()
-                except Exception as e:
-                    print(f"Processing error: {e}")
-        
-        return self.finalize_subscriptions()
-
-    def finalize_subscriptions(self):
-        valid_links = []
+                    f.result()
+                except:
+                    pass
+        valid = []
         for link in self.subscription_links:
             try:
-                head_resp = self.session.head(link, timeout=8)
-                if head_resp.status_code < 400:
-                    valid_links.append(link)
+                head = self.session.head(link, timeout=8)
+                if head.status_code < 400:
+                    valid.append(link)
             except:
                 pass
-        
-        unique_links = list(set(valid_links))
+        unique = list(set(valid))
         with open('pool_address.txt', 'w', encoding='utf-8') as f:
-            for link in unique_links:
-                f.write(link + '\n')
-        
-        print(f"\nDone. Saved {len(unique_links)} unique valid subscription links to pool_address.txt")
-        return unique_links
-
-def main():
-    finder = V2RaySubscriptionFinder()
-    links = finder.find_valid_subscriptions()
-    if links:
-        print("\nSample links:")
-        for link in links[:10]:
-            print(f"  {link}")
+            for line in unique:
+                f.write(line + '\n')
+        print(f"Done. Saved {len(unique)} unique valid subscription links to pool_address.txt")
+        return unique
 
 if __name__ == "__main__":
-    main()
+    finder = V2RaySubscriptionFinder()
+    finder.find_valid_subscriptions()
