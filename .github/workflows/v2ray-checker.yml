@@ -2,7 +2,7 @@ name: V2Ray Link Cleaner & Tester
 
 on:
   schedule:
-    - cron: '0 */5 * * *'      # هر ۵ ساعت یکبار
+    - cron: '0 0 * * *'      # هر ۲۴ ساعت یکبار
   workflow_dispatch:            # قابلیت اجرای دستی
 
 env:
