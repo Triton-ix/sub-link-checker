@@ -30,6 +30,8 @@ jobs:
 
       - name: جستجو و به‌روزرسانی لینک‌های ساب‌اسکریپشن
         run: python find_sub_links.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ذخیره تغییرات در مخزن
         run: |
