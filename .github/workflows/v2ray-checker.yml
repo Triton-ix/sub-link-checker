@@ -28,7 +28,7 @@ jobs:
           pip install requests
 
       - name: 🕸️ جمع‌آوری خودکار و هوشمند لینک‌های سابسکریپشن
-        run: python collect_subscriptions.py
+        run: python find_sub_links.py
 
       - name: 🚀 مرحله ۱ - استخراج و پاکسازی کانفیگ‌ها
         run: python sub_link_checker.py
