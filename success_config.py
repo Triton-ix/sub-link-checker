@@ -99,23 +99,28 @@ def append_working_config(config, output_file):
         f.write(config + '\n')
 
 def git_commit_and_push():
-    """انجام commit و push همه فایل‌های مربوطه"""
+    """انجام commit و push فقط در صورت وجود تغییر واقعی"""
     try:
-        # افزودن فایل‌ها به staging
+        # تنظیم identity git
+        subprocess.run(["git", "config", "user.name", "github-actions[bot]"], capture_output=True, check=False)
+        subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], capture_output=True, check=False)
+        
+        # افزودن فایل‌ها
         subprocess.run(["git", "add", "cleaned_configs.txt", "success_config.txt", "link_stats.json", "README.md"], check=True, capture_output=True)
-        # بررسی تغییرات
-        result = subprocess.run(["git", "diff", "--staged", "--quiet"], capture_output=True)
-        if result.returncode != 0:  # تغییر وجود دارد
-            # commit
+        
+        # بررسی تغییر در staging area
+        result = subprocess.run(["git", "diff", "--cached", "--quiet"], capture_output=True)
+        if result.returncode != 0:
             commit_msg = f"Auto-update after batch - {time.strftime('%Y-%m-%d %H:%M:%S')}"
             subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
-            # push
             subprocess.run(["git", "push"], check=True, capture_output=True)
             color_print("[✓] Changes committed and pushed to GitHub.", Fore.GREEN)
         else:
-            color_print("[*] No changes to commit.", Fore.CYAN)
+            color_print("[*] No changes to commit (files are identical).", Fore.CYAN)
     except subprocess.CalledProcessError as e:
         color_print(f"[!] Git operation failed: {e}", Fore.RED)
+        if e.stderr:
+            color_print(f"Error details: {e.stderr.decode()}", Fore.RED)
 
 def main():
     color_print("=" * 60, Fore.CYAN)
@@ -179,14 +184,11 @@ def main():
         color_print(f"\n[Batch {batch_num}] Completed. Working in this batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
         batch_num += 1
         
-        # به‌روزرسانی README.md و commit & push
+        # به‌روزرسانی README و commit
         color_print("[*] Updating README.md and committing changes...", Fore.CYAN)
-        # اجرای اسکریپت به‌روزرسانی README
         subprocess.run([sys.executable, "update_readme.py"], check=False)
-        # commit و push
         git_commit_and_push()
         
-        # استراحت کوتاه بین بسته‌ها برای جلوگیری از بلاک شدن IP
         if end < total:
             sleep_time = random.uniform(1.0, 2.0)
             color_print(f"[*] Sleeping for {sleep_time:.1f} seconds to avoid blocking...", Fore.CYAN)
@@ -205,7 +207,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         color_print("\n[!] Interrupted. Already saved working configs.", Fore.YELLOW)
-        git_commit_and_push()  # یک بار دیگر در صورت قطع شدن، commit کند
+        git_commit_and_push()
     except Exception as e:
         color_print(f"\n[ERROR] {e}", Fore.RED)
         sys.exit(1)
