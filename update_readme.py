@@ -19,7 +19,6 @@ def get_link_stats():
     return total_links, working_links, total_links - working_links
 
 def get_raw_total():
-    """تعداد خام کانفیگ‌ها (قبل از حذف تکراری) از لینک‌های موفق جمع می‌شود"""
     stats_file = "link_stats.json"
     if not os.path.exists(stats_file):
         return 0
@@ -32,15 +31,11 @@ def get_raw_total():
     return total
 
 def generate_readme():
-    # آمار لینک‌ها
     total_links, working_links, dead_links = get_link_stats()
-    
-    # آمار کانفیگ‌ها
     raw_total = get_raw_total()
     unique_total = read_file_lines("cleaned_configs.txt")
     working_total = read_file_lines("success_config.txt")
     
-    # محاسبه درصدها
     working_links_percent = (working_links / total_links * 100) if total_links > 0 else 0
     dead_links_percent = (dead_links / total_links * 100) if total_links > 0 else 0
     unique_percent = (unique_total / raw_total * 100) if raw_total > 0 else 0
@@ -51,12 +46,11 @@ def generate_readme():
     last_update = datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
     
     table = f"""
-## 📊 گزارش خودکار وضعیت کانفیگ‌ها (به‌روزرسانی خودکار هر ۲۴ ساعت)
-# در تابع generate_readme، قبل از table = f"""... یک خط اضافه کن
-# ...
-table = f"""
 ## 🤖 تولید شده توسط هوش مصنوعی
 این کدها با کمک **GitHub Copilot** و **پیشنهادات هوش مصنوعی** ساخته و بهینه‌سازی شده‌اند.
+
+## 📊 گزارش خودکار وضعیت کانفیگ‌ها (به‌روزرسانی خودکار هر ۲۴ ساعت)
+
 **📅 آخرین بروزرسانی:** {last_update}
 
 | آیتم | تعداد | درصد |
@@ -73,16 +67,15 @@ table = f"""
 ### 🧪 روش تست
 - هر کانفیگ با ارسال درخواست HTTP به آدرس `host:port` تست می‌شود.
 - کد پاسخ کمتر از 500 به معنی سالم بودن است.
-- تعداد همزمانی در تست: ۳ رشته (برای جلوگیری از مسدود شدن IP)
-- فاصله تصادفی بین درخواست‌ها: ۰٫۰۵ تا ۰٫۲ ثانیه
-- پردازش به صورت دسته‌های ۵۰۰ تایی برای جلوگیری از کرش و مصرف بهینه حافظه
+- تعداد همزمانی در تست: ۱۰ رشته (برای سرعت بالا و جلوگیری از بلاک)
+- فاصله تصادفی بین بسته‌های ۷۰۰۰ تایی: ۱ تا ۲ ثانیه
 
 ### 📁 فایل‌های خروجی
 - `cleaned_configs.txt` → همه کانفیگ‌های یکتا (بدون تکرار)
 - `success_config.txt` → فقط کانفیگ‌های سالم
 - `link_stats.json` → جزئیات وضعیت هر لینک اشتراک
 
-> این گزارش به‌طور خودکار هر ۲۴ ساعت یکبار تولید می‌شود. در صورت بروز خطا یا قطع شدن اجرا، تا آخرین بسته تست شده نتایج ذخیره می‌شوند.
+> این گزارش به‌طور خودکار هر ۲۴ ساعت یکبار تولید می‌شود.
 """
     with open("README.md", "w", encoding='utf-8') as f:
         f.write(table)
