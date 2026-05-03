@@ -5,7 +5,7 @@ import json
 import time
 import random
 import signal
-import warnings  # <-- این خط اضافه شد
+import warnings  # <-- این خط را حتماً اضافه کنید
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import init, Fore, Style
 
