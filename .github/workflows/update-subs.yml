@@ -26,11 +26,9 @@ jobs:
       - name: نصب کتابخانه‌های مورد نیاز
         run: |
           python -m pip install --upgrade pip
-          pip install requests colorama
+          pip install requests beautifulsoup4 colorama
 
       - name: جستجو و به‌روزرسانی لینک‌های ساب‌اسکریپشن
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python find_sub_links.py
 
       - name: ذخیره تغییرات در مخزن
