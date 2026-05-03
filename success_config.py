@@ -5,6 +5,7 @@ import json
 import time
 import random
 import signal
+import warnings  # <-- این خط اضافه شد
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import init, Fore, Style
 
@@ -42,14 +43,12 @@ def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
 def test_single_config(config_line, timeout=3):
-    """تست یک کانفیگ و بازگرداندن (config, working)"""
     if stop_testing:
         return config_line, False
     try:
         if not config_line.strip():
             return config_line, False
         host, port = None, None
-        # استخراج host:port بر اساس پروتکل
         if config_line.startswith('vless://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
@@ -71,13 +70,12 @@ def test_single_config(config_line, timeout=3):
             port = parsed.port
         if host and port:
             test_url = f"http://{host}:{port}/"
-            # استفاده از session برای بهبود کارایی
             with requests.Session() as session:
                 session.headers.update(HEADERS)
                 session.verify = False
                 resp = session.get(test_url, timeout=timeout)
                 if resp.status_code < 500:
-                    time.sleep(random.uniform(0.05, 0.2))  # تأخیر خیلی کم
+                    time.sleep(random.uniform(0.05, 0.2))
                     return config_line, True
         return config_line, False
     except Exception:
@@ -92,7 +90,6 @@ def read_configs(filename):
         return []
 
 def append_working_config(config, output_file):
-    """نوشتن یک کانفیگ سالم به فایل (با قفل ساده - چون تک‌رشته‌ای append می‌کنیم)"""
     with open(output_file, 'a', encoding='utf-8') as f:
         f.write(config + '\n')
 
@@ -104,7 +101,6 @@ def main():
     input_file = 'cleaned_configs.txt'
     output_file = 'success_config.txt'
     
-    # حذف فایل قبلی برای شروع تازه
     if os.path.exists(output_file):
         os.remove(output_file)
     
@@ -116,16 +112,14 @@ def main():
     total = len(configs)
     color_print(f"[*] Total unique configs to test: {total}", Fore.GREEN)
     
-    # پارامترهای بهینه
-    BATCH_SIZE = 500        # هر دسته ۵۰۰ تایی
-    MAX_WORKERS = 3         # تعداد همزمانی کم برای جلوگیری از بلاک
-    WORKER_TIMEOUT = 5      # timeout کلی برای هر future
+    BATCH_SIZE = 500
+    MAX_WORKERS = 3
+    WORKER_TIMEOUT = 5
     
     working_total = 0
     processed = 0
     batch_num = 1
     
-    # پردازش به صورت دسته‌ای
     for start in range(0, total, BATCH_SIZE):
         if stop_testing:
             break
@@ -153,7 +147,6 @@ def main():
                     batch_working += 1
                     append_working_config(cfg, output_file)
                 
-                # نمایش پیشرفت کلی
                 percent = (working_total / processed * 100) if processed > 0 else 0
                 status = "✓" if is_working else "✗"
                 color = Fore.GREEN if is_working else Fore.RED
