@@ -42,47 +42,50 @@ signal.signal(signal.SIGINT, signal_handler)
 def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
-def test_single_config(config_line, timeout=2):
+def test_single_config(config_line, timeout=1):
+    """تست یک کانفیگ با حداکثر ۱ ثانیه زمان - کاملاً مشابه کد اصلی"""
     if stop_testing:
         return config_line, False
     try:
         if not config_line.strip():
             return config_line, False
-        host, port = None, None
+        # تشخیص پروتکل
         if config_line.startswith('vless://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
-            if '@' in parsed.netloc:
-                host_port = parsed.netloc.split('@')[1]
-                if ':' in host_port:
-                    host, port = host_port.split(':')
+            if parsed.netloc:
+                host_port = parsed.netloc.split('@')
+                if len(host_port) > 1:
+                    server_parts = host_port[1].split(':')
+                    if len(server_parts) == 2:
+                        host, port = server_parts
+                        test_url = f"http://{host}:{port}/"
+                        resp = requests.get(test_url, timeout=timeout, headers=HEADERS, verify=False)
+                        if resp.status_code < 500:
+                            return config_line, True
         elif config_line.startswith('vmess://'):
             import base64
             encoded = config_line.replace('vmess://', '')
             try:
                 decoded = base64.b64decode(encoded).decode('utf-8')
                 config = json.loads(decoded)
-                host = config.get('add')
-                port = str(config.get('port'))
+                if 'add' in config and 'port' in config:
+                    test_url = f"http://{config['add']}:{config['port']}/"
+                    resp = requests.get(test_url, timeout=timeout, headers=HEADERS, verify=False)
+                    if resp.status_code < 500:
+                        return config_line, True
             except:
-                return config_line, False
+                pass
         elif config_line.startswith('trojan://') or config_line.startswith('ss://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
-            host = parsed.hostname
-            port = parsed.port
-        if host and port:
-            test_url = f"http://{host}:{port}/"
-            with requests.Session() as session:
-                session.headers.update(HEADERS)
-                session.verify = False
-                resp = session.get(test_url, timeout=timeout)
+            if parsed.hostname and parsed.port:
+                test_url = f"http://{parsed.hostname}:{parsed.port}/"
+                resp = requests.get(test_url, timeout=timeout, headers=HEADERS, verify=False)
                 if resp.status_code < 500:
-                    # تأخیر بسیار کم، فقط برای طبیعی جلوه دادن
-                    time.sleep(random.uniform(0, 0.05))
                     return config_line, True
         return config_line, False
-    except:
+    except Exception:
         return config_line, False
 
 def read_configs(filename):
@@ -99,7 +102,7 @@ def append_working_config(config, output_file):
 
 def main():
     color_print("=" * 60, Fore.CYAN)
-    color_print("V2RAY CONFIGURATION TESTER (FAST & SAFE)", Fore.YELLOW, Style.BRIGHT)
+    color_print("V2RAY CONFIGURATION TESTER (FAST BATCH)", Fore.YELLOW, Style.BRIGHT)
     color_print("=" * 60, Fore.CYAN)
 
     input_file = 'cleaned_configs.txt'
@@ -116,10 +119,9 @@ def main():
     total = len(configs)
     color_print(f"[*] Total unique configs to test: {total}", Fore.GREEN)
     
-    # تنظیمات متعادل: سریع اما ایمن
-    BATCH_SIZE = 500
-    MAX_WORKERS = 5            # افزایش از 2 به 5
-    TASK_TIMEOUT = 8           # زمان انتظار برای هر تسک
+    BATCH_SIZE = 7000
+    MAX_WORKERS = 10
+    WORKER_TIMEOUT = 1  # هر تست حداکثر 1 ثانیه
     
     working_total = 0
     processed = 0
@@ -132,17 +134,18 @@ def main():
         batch_configs = configs[start:end]
         batch_working = 0
         
-        color_print(f"\n[Batch {batch_num}] Testing {start+1}-{end} ({len(batch_configs)} items) with {MAX_WORKERS} workers...", Fore.CYAN)
+        color_print(f"\n[Batch {batch_num}] Testing configs {start+1} to {end} ({len(batch_configs)} items) with {MAX_WORKERS} workers...", Fore.CYAN)
         
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            future_to_config = {executor.submit(test_single_config, cfg, TASK_TIMEOUT): cfg for cfg in batch_configs}
+            future_to_config = {executor.submit(test_single_config, cfg, WORKER_TIMEOUT): cfg for cfg in batch_configs}
             for future in as_completed(future_to_config):
                 if stop_testing:
                     executor.shutdown(wait=False, cancel_futures=True)
                     break
                 try:
-                    cfg, is_working = future.result(timeout=TASK_TIMEOUT)
+                    cfg, is_working = future.result(timeout=WORKER_TIMEOUT+0.5)
                 except Exception:
+                    # اگر future به هر دلیلی موفق نبود، آن کانفیگ را ناسالم در نظر بگیر
                     cfg = future_to_config[future]
                     is_working = False
                 
@@ -152,16 +155,20 @@ def main():
                     batch_working += 1
                     append_working_config(cfg, output_file)
                 
-                # نمایش پیشرفت (هر 100 تا یکبار به روزرسانی برای کاهش مصرف)
-                if processed % 100 == 0 or processed == total:
-                    percent = (working_total / processed * 100) if processed > 0 else 0
-                    status = "✓" if is_working else "✗"
-                    color = Fore.GREEN if is_working else Fore.RED
-                    print(f"\r[{processed}/{total} ({percent:.1f}%)] Working: {working_total}  {color}{status}{Style.RESET_ALL}", end='', flush=True)
+                # نمایش پیشرفت
+                percent = (working_total / processed * 100) if processed > 0 else 0
+                status = "✓" if is_working else "✗"
+                color = Fore.GREEN if is_working else Fore.RED
+                print(f"\r[{processed}/{total} ({percent:.1f}%)] Working: {working_total}  {color}{status}{Style.RESET_ALL}", end='', flush=True)
         
-        # نمایش نتیجه بسته
-        color_print(f"\n[Batch {batch_num}] Working: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
+        color_print(f"\n[Batch {batch_num}] Completed. Working in this batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
         batch_num += 1
+        
+        # استراحت کوتاه بین بسته‌ها برای جلوگیری از بلاک شدن IP
+        if end < total:
+            sleep_time = random.uniform(1.0, 2.0)
+            color_print(f"[*] Sleeping for {sleep_time:.1f} seconds to avoid blocking...", Fore.CYAN)
+            time.sleep(sleep_time)
     
     print()
     color_print(f"\n[✓] Testing completed. Total working configs: {working_total}/{total}", Fore.GREEN)
