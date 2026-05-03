@@ -1,18 +1,18 @@
-name: V2Ray Link Cleaner
+name: V2Ray Link Cleaner & Tester
 
 on:
   schedule:
     - cron: '0 */5 * * *'      # هر ۵ ساعت یکبار
-  workflow_dispatch:            # اجازه اجرای دستی
+  workflow_dispatch:            # قابلیت اجرای دستی
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # رفع اخطار Node.js
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   run-checker:
     runs-on: ubuntu-latest
     permissions:
-      contents: write            # اجازه نوشتن در مخزن (برای push)
+      contents: write
 
     steps:
       - name: دریافت کد از مخزن
@@ -26,15 +26,18 @@ jobs:
       - name: نصب کتابخانه‌های مورد نیاز
         run: |
           python -m pip install --upgrade pip
-          pip install requests colorama
+          pip install requests colorama urllib3
 
-      - name: اجرای چکر لینک‌ها
+      - name: مرحله ۱ - پاکسازی و استخراج کانفیگ‌ها
         run: python sub_link_checker.py
 
-      - name: ذخیره خودکار فایل خروجی در مخزن
+      - name: مرحله ۲ - تست کانفیگ‌ها و استخراج سالم‌ها
+        run: python success_config.py
+
+      - name: ذخیره خودکار هر دو فایل خروجی در مخزن
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add cleaned_configs.txt
-          git diff --staged --quiet || git commit -m "Auto-update cleaned configs - $(date '+%Y-%m-%d %H:%M:%S')"
+          git add cleaned_configs.txt success_config.txt
+          git diff --staged --quiet || git commit -m "Auto-update configs - $(date '+%Y-%m-%d %H:%M:%S')"
           git push
