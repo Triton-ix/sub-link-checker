@@ -30,6 +30,16 @@ HEADERS = {
 GITHUB_SEARCH_URL = "https://api.github.com/search/code"
 GITHUB_REPO_URL = "https://api.github.com/repos"
 
+def get_github_headers():
+    """بازگرداندن هدرهای درخواست به همراه توکن در صورت وجود"""
+    headers = HEADERS.copy()
+    token = os.environ.get('GITHUB_TOKEN')
+    if token:
+        headers['Authorization'] = f'token {token}'
+    else:
+        print("[!] GITHUB_TOKEN not found. API rate limit will be very low.")
+    return headers
+
 def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
@@ -50,15 +60,18 @@ def search_github_sub_links():
     ]
     
     found_raw_links = []
+    headers = get_github_headers()
     
     for query in queries:
         page = 1
         while page <= 3:
             params = {'q': query, 'per_page': 30, 'page': page}
             try:
-                resp = requests.get(GITHUB_SEARCH_URL, headers=HEADERS, params=params, timeout=10)
+                resp = requests.get(GITHUB_SEARCH_URL, headers=headers, params=params, timeout=10)
                 if resp.status_code != 200:
                     color_print(f"  [!] Search failed for '{query}': {resp.status_code}", Fore.RED)
+                    if resp.status_code == 401:
+                        color_print("      ❌ Authentication failed. Make sure GITHUB_TOKEN is set.", Fore.RED)
                     break
                 data = resp.json()
                 items = data.get('items', [])
@@ -87,8 +100,9 @@ def search_github_sub_links():
 
 def check_repo_last_commit(repo_full_name):
     api_url = f"{GITHUB_REPO_URL}/{repo_full_name}"
+    headers = get_github_headers()
     try:
-        resp = requests.get(api_url, headers=HEADERS, timeout=10)
+        resp = requests.get(api_url, headers=headers, timeout=10)
         if resp.status_code == 200:
             data = resp.json()
             pushed_at = data.get('pushed_at')
@@ -101,10 +115,11 @@ def check_repo_last_commit(repo_full_name):
         return False, None
 
 def has_persian_or_iran(repo_full_name, file_path, raw_url):
+    headers = get_github_headers()
     # چک README
     readme_url = f"https://raw.githubusercontent.com/{repo_full_name}/HEAD/README.md"
     try:
-        resp = requests.get(readme_url, headers=HEADERS, timeout=8)
+        resp = requests.get(readme_url, headers=headers, timeout=8)
         if resp.status_code == 200:
             content = resp.text.lower()
             if re.search(r'[آ-ی]|iran|ایران|تهران|v2ray.*ایران|free.*iran', content):
@@ -113,7 +128,7 @@ def has_persian_or_iran(repo_full_name, file_path, raw_url):
         pass
     # چک خود فایل
     try:
-        resp = requests.get(raw_url, headers=HEADERS, timeout=8)
+        resp = requests.get(raw_url, headers=headers, timeout=8)
         if resp.status_code == 200:
             content = resp.text.lower()
             if re.search(r'[آ-ی]|iran|ایران|تهران|v2ray.*ایران|free.*iran', content):
@@ -123,8 +138,9 @@ def has_persian_or_iran(repo_full_name, file_path, raw_url):
     return False
 
 def validate_subscription_link(url):
+    headers = get_github_headers()
     try:
-        resp = requests.get(url, timeout=10, headers=HEADERS)
+        resp = requests.get(url, timeout=10, headers=headers)
         if resp.status_code == 200:
             text = resp.text.strip()
             if len(text) > 50 and re.match(r'^[A-Za-z0-9+/=]+$', text[:100]):
