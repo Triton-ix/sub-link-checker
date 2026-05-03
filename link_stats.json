@@ -1,0 +1,350 @@
+{
+  "https://raw.githubusercontent.com/MahsaNetConfigTopic/config/main/xray_final.txt": {
+    "success": true,
+    "configs_found": 24
+  },
+  "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/all_extracted_configs.txt": {
+    "success": true,
+    "configs_found": 35216
+  },
+  "https://raw.githubusercontent.com/xsparvin/Submahsanetxsparvin/refs/heads/main/Sub.mahsa.xsparvin": {
+    "success": true,
+    "configs_found": 1560
+  },
+  "https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge_base64.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/splitted/mixed": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/splitted/mixed"
+  },
+  "https://raw.githubusercontent.com/ts-sf/fly/main/v2": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://tackserver-code.ir/api/json/mrpooya.xyz.json": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='tackserver-code.ir', port=443): Max retries exceeded with url: /api/json/mrpooya.xyz.json (Caused by NameResolutionError(\"HTTPSConnection(host='tackserver-code.ir', port=443): Failed to resolve 'tackserver-code.ir' ([Errno -2] Name or service not known)\"))"
+  },
+  "https://raw.githubusercontent.com/hiddify/hiddify-app/refs/heads/main/test.configs/mahsa": {
+    "success": true,
+    "configs_found": 15
+  },
+  "https://raw.githubusercontent.com/NiREvil/vless/main/sub/v2rayng-wg.txt": {
+    "success": true,
+    "configs_found": 80
+  },
+  "https://raw.githubusercontent.com/DukeMehdi/FreeList-V2ray-Configs/refs/heads/main/Configs/All-DukeMehdi-Configs.txt": {
+    "success": true,
+    "configs_found": 35725
+  },
+  "https://raw.githubusercontent.com/MrMohebi/xray-proxy-grabber-telegram/master/collected-proxies/row-url/all.txt": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/MrMohebi/xray-proxy-grabber-telegram/master/collected-proxies/row-url/all.txt"
+  },
+  "https://raw.githubusercontent.com/ZywChannel/free/main/sub": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/learnhard-cn/free_proxy_ss/main/v2ray/v2raysub": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://config.elaheniloofar.link": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='config.elaheniloofar.link', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='config.elaheniloofar.link', port=443): Failed to resolve 'config.elaheniloofar.link' ([Errno -2] Name or service not known)\"))"
+  },
+  "https://raw.githubusercontent.com/freefq/free/master/v2": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/AlienVPN402/AlienVPN402-subscribe-servers-sing-box/main/index.html": {
+    "success": true,
+    "configs_found": 906
+  },
+  "https://raw.githubusercontent.com/DukeMehdi/FreeList-V2ray-Configs/refs/heads/main/Configs/VLESS-DukeMehdi-Configs.txt": {
+    "success": true,
+    "configs_found": 20111
+  },
+  "https://raw.githubusercontent.com/learnhard-cn/free_proxy_ss/main/ssr/ssrsub": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/ermaozi01/free_clash_vpn/main/subscribe/v2ray.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/tbbatbb/Proxy/master/dist/v2ray.config.txt": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/tbbatbb/Proxy/master/dist/v2ray.config.txt"
+  },
+  "https://raw.githubusercontent.com/nyeinkokoaung404/V2ray-Configs/main/All_Configs_Sub.txt": {
+    "success": true,
+    "configs_found": 1041
+  },
+  "https://proxy.yugogo.xyz/trojan/sub": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='proxy.yugogo.xyz', port=443): Read timed out. (read timeout=15)"
+  },
+  "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/super-sub.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://test2.sub-channel.workers.dev/vless/android/random": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='test2.sub-channel.workers.dev', port=443): Max retries exceeded with url: /vless/android/random (Caused by NameResolutionError(\"HTTPSConnection(host='test2.sub-channel.workers.dev', port=443): Failed to resolve 'test2.sub-channel.workers.dev' ([Errno -2] Name or service not known)\"))"
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/vless": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/vless"
+  },
+  "https://rentry.co/cyru55/raw": {
+    "success": true,
+    "configs_found": 116
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_Sub.txt": {
+    "success": true,
+    "configs_found": 3204
+  },
+  "https://raw.githubusercontent.com/HakurouKen/free-node/main/public": {
+    "success": true,
+    "configs_found": 19
+  },
+  "https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector/main/sub/mix": {
+    "success": true,
+    "configs_found": 1670
+  },
+  "https://yoyapai.com/mianfeijiedian/20260405-ssr-v2rayvpn-jiedian-yoyapai.com.txt": {
+    "success": true,
+    "configs_found": 180
+  },
+  "https://raw.githubusercontent.com/mianfeifq/share/main/README.md": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/mianfeifq/share/main/README.md"
+  },
+  "https://raw.githubusercontent.com/SonzaiEkkusu/V2RayDumper/refs/heads/main/config.txt": {
+    "success": true,
+    "configs_found": 448
+  },
+  "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/all_sub.txt": {
+    "success": true,
+    "configs_found": 4004
+  },
+  "https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt#CFG": {
+    "success": true,
+    "configs_found": 1297
+  },
+  "https://raw.githubusercontent.com/Farid-Karimi/Config-Collector/main/mixed_iran.txt": {
+    "success": true,
+    "configs_found": 417
+  },
+  "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/base64/mix": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/base64/mix"
+  },
+  "https://raw.githubusercontent.com/xieshunxi1/subscribe_clash_v2ray/main/subscribe/v2ray.txt": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/xieshunxi1/subscribe_clash_v2ray/main/subscribe/v2ray.txt"
+  },
+  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/airport_merge_base64.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/NiREvil/vless/refs/heads/main/warp.json": {
+    "success": true,
+    "configs_found": 6
+  },
+  "https://raw.githubusercontent.com/10ium/ScrapeAndCategorize/refs/heads/main/output_configs/Iran.txt": {
+    "success": true,
+    "configs_found": 922
+  },
+  "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/V2Ray-Config-By-EbraSha.txt": {
+    "success": true,
+    "configs_found": 144
+  },
+  "https://raw.githubusercontent.com/hiddify/hiddify-app/refs/heads/main/test.configs/warp": {
+    "success": true,
+    "configs_found": 20
+  },
+  "https://raw.githubusercontent.com/Stinsonysm/GO_V2rayCollector/main/trojan_iran.txt": {
+    "success": true,
+    "configs_found": 152
+  },
+  "https://proxy.yugogo.xyz/sip002/sub": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='proxy.yugogo.xyz', port=443): Read timed out. (read timeout=15)"
+  },
+  "https://raw.githubusercontent.com/learnhard-cn/free_proxy_ss/main/free": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/wrfree/free/main/README.md": {
+    "success": true,
+    "configs_found": 67
+  },
+  "https://raw.githubusercontent.com/HosseinKoofi/GO_V2rayCollector/main/mixed_iran.txt": {
+    "success": true,
+    "configs_found": 2857
+  },
+  "https://raw.githubusercontent.com/4n0nymou3/multi-proxy-config-fetcher/refs/heads/main/configs/proxy_configs.txt": {
+    "success": true,
+    "configs_found": 1297
+  },
+  "https://raw.githubusercontent.com/NiREvil/vless/refs/heads/main/hiddify/proton-wire.json": {
+    "success": true,
+    "configs_found": 416
+  },
+  "https://github.com/Epodonios/v2ray-configs/raw/main/All_Configs_Sub.txt": {
+    "success": true,
+    "configs_found": 5983
+  },
+  "https://raw.githubusercontent.com/AzadNetCH/Clash/main/V2Ray.txt": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/AzadNetCH/Clash/main/V2Ray.txt"
+  },
+  "https://raw.githubusercontent.com/learnhard-cn/free_proxy_ss/main/ss/sssub": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/DukeMehdi/FreeList-V2ray-Configs/refs/heads/main/Configs/VMESS-DukeMehdi-Configs.txt": {
+    "success": true,
+    "configs_found": 3209
+  },
+  "https://raw.githubusercontent.com/ALIILAPRO/v2rayNG-Config/main/sub.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/a2470982985/getNode/main/v2ray.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/w1770946466/Auto_proxy/main/Long_term_subscription_num": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/mix.txt": {
+    "success": true,
+    "configs_found": 167
+  },
+  "https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/README.md": {
+    "success": true,
+    "configs_found": 215
+  },
+  "https://raw.githubusercontent.com/xiaoji235/airport-free/refs/heads/main/v2ray.txt": {
+    "success": true,
+    "configs_found": 473
+  },
+  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/Eternity": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/itsyebekhe/PSG/main/subscriptions/xray/base64/mix": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/refs/heads/main/all_configs.txt": {
+    "success": true,
+    "configs_found": 4818
+  },
+  "https://raw.githubusercontent.com/sashalsk/V2Ray/main/V2Config": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/sashalsk/V2Ray/main/V2Config"
+  },
+  "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/v2ray.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://proxy.yugogo.xyz/vmess/sub": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='proxy.yugogo.xyz', port=443): Read timed out. (read timeout=15)"
+  },
+  "https://raw.githubusercontent.com/LonUp/NodeList/main/V2RAY/Latest_base64.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt": {
+    "success": true,
+    "configs_found": 4981
+  },
+  "https://bn-chanll.cf/sub/ss": {
+    "success": false,
+    "error": "HTTPSConnectionPool(host='bn-chanll.cf', port=443): Max retries exceeded with url: /sub/ss (Caused by NameResolutionError(\"HTTPSConnection(host='bn-chanll.cf', port=443): Failed to resolve 'bn-chanll.cf' ([Errno -5] No address associated with hostname)\"))"
+  },
+  "https://raw.githubusercontent.com/WilliamStar007/ClashX-V2Ray-TopFreeProxy/main/combine/v2ray.config.txt": {
+    "success": true,
+    "configs_found": 7
+  },
+  "https://raw.githubusercontent.com/lagzian/IranConfigCollector/main/Base64.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://gist.githubusercontent.com/WhiteNightlight/f29872bd28b1e38641ff5a480215db6a/raw/bestofthebest": {
+    "success": true,
+    "configs_found": 38
+  },
+  "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt": {
+    "success": true,
+    "configs_found": 5983
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-Configs/main/All_Configs_Sub.txt": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/barry-far/V2ray-Configs/main/All_Configs_Sub.txt"
+  },
+  "https://raw.githubusercontent.com/Ashkan-m/v2ray/main/Sub.txt": {
+    "success": true,
+    "configs_found": 61
+  },
+  "https://raw.githubusercontent.com/youfoundamin/V2rayCollector/main/mixed_iran.txt": {
+    "success": true,
+    "configs_found": 351
+  },
+  "https://raw.githubusercontent.com/mheidari98/.proxy/main/all": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/vmess": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/vmess"
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/mix": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/mix"
+  },
+  "https://raw.githubusercontent.com/mostafasadeghifar/v2ray-config/main/config_file.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/EternityAir": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/DukeMehdi/FreeList-V2ray-Configs/refs/heads/main/Configs/Lite-DukeMehdi-Configs.txt": {
+    "success": true,
+    "configs_found": 500
+  },
+  "https://freefq.neocities.org/free.txt": {
+    "success": false,
+    "error": "404 Client Error: Not Found for url: https://freefq.neocities.org/free.txt"
+  },
+  "https://raw.githubusercontent.com/Surfboardv2ray/Proxy-sorter/main/submerge/converted.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt": {
+    "success": true,
+    "configs_found": 131
+  }
+}
