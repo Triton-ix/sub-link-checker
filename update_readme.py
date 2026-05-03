@@ -4,17 +4,19 @@ from datetime import datetime, timezone, timedelta
 import subprocess
 import sys
 
-# ------------------- تبدیل به تاریخ و زمان ایران (UTC+3:30) و شمسی -------------------
-def to_jalali(gregorian_dt):
-    # تبدیل datetime utc به ایران (UTC+3:30)
-    tehran_tz = timezone(timedelta(hours=3, minutes=30))
-    local = gregorian_dt.astimezone(tehran_tz)
-    # نصب کتابخانه jdatetime در صورتی که نباشد
+def install_jdatetime():
     try:
         import jdatetime
+        return jdatetime
     except ImportError:
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'jdatetime'], capture_output=True)
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'jdatetime'])
         import jdatetime
+        return jdatetime
+
+def to_jalali(gregorian_dt):
+    jdatetime = install_jdatetime()
+    tehran_tz = timezone(timedelta(hours=3, minutes=30))
+    local = gregorian_dt.astimezone(tehran_tz)
     return jdatetime.datetime.fromgregorian(datetime=local).strftime("%Y/%m/%d %H:%M:%S")
 
 def read_lines_count(fname):
@@ -44,16 +46,13 @@ def get_raw_total():
     return total
 
 def generate_readme():
-    # آمار لینک‌ها
     total_links, working_links, dead_links = get_link_stats()
-    # آمار کانفیگ‌ها
     raw_total = get_raw_total()
     unique_total = read_lines_count("cleaned_configs.txt")
     working_total = read_lines_count("success_config.txt")
     duplicate_total = raw_total - unique_total if raw_total > unique_total else 0
     dead_configs = unique_total - working_total if unique_total > working_total else 0
 
-    # درصدها
     perc_links_working = (working_links / total_links * 100) if total_links else 0
     perc_links_dead = (dead_links / total_links * 100) if total_links else 0
     perc_unique = (unique_total / raw_total * 100) if raw_total else 0
@@ -61,7 +60,6 @@ def generate_readme():
     perc_working = (working_total / unique_total * 100) if unique_total else 0
     perc_dead = 100 - perc_working if unique_total else 0
 
-    # زمان بروزرسانی به شمسی و تهران
     now_utc = datetime.now(timezone.utc)
     jalali_str = to_jalali(now_utc)
 
@@ -90,6 +88,13 @@ def generate_readme():
 - همزمانی: ۱۰ رشته – ذخیره نتایج هر ۷۰۰۰ کانفیگ در مخزن.
 - لینک‌های اشتراک هر ۵ روز یکبار به‌روز می‌شوند (اکشن جداگانه).
 
+### 🚀 استفاده آسان
+برای استفاده از لیست به‌روز کانفیگ‌های سالم، فقط کافی است لینک زیر را در نرم‌افزار اشتراک‌گیر V2Ray خود (مثل v2rayN, Nekobox) وارد کنید:
+
+👉 **[https://github.com/farzanfarhangi/sub-link-checker/blob/main/success_config.txt](https://github.com/farzanfarhangi/sub-link-checker/blob/main/success_config.txt)**
+
+این فایل شامل هزاران کانفیگ تست‌شده و فعال است که از بیش از ۸۰ لینک اشتراک مختلف استخراج شده‌اند.
+
 ### 📁 فایل‌های خروجی
 - `cleaned_configs.txt` : کانفیگ‌های یکتا
 - `success_config.txt` : کانفیگ‌های سالم (تدریجی append)
@@ -102,10 +107,4 @@ def generate_readme():
     print("README.md updated with Persian date and new table.")
 
 if __name__ == "__main__":
-    # نصب jdatetime در صورتی که نباشد
-    try:
-        import jdatetime
-    except ImportError:
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'jdatetime'])
-        import jdatetime
     generate_readme()
