@@ -92,15 +92,18 @@ def append_working(cfg, outfile):
 
 def git_commit_push():
     try:
-        subprocess.run(["git", "config", "user.name", "github-actions[bot]"], capture_output=True, check=False)
-        subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], capture_output=True, check=False)
+        subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=False, capture_output=True)
+        subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], check=False, capture_output=True)
         subprocess.run(["git", "add", "cleaned_configs.txt", "success_config.txt", "link_stats.json", "README.md"], check=True, capture_output=True)
-        res = subprocess.run(["git", "diff", "--cached", "--quiet"], capture_output=True)
-        if res.returncode != 0:
+        result = subprocess.run(["git", "diff", "--cached", "--quiet"], capture_output=True)
+        if result.returncode != 0:
             commit_msg = f"Auto-update after batch - {time.strftime('%Y-%m-%d %H:%M:%S')}"
             subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
-            subprocess.run(["git", "push"], check=True, capture_output=True)
-            color_print("[✓] Committed and pushed.", Fore.GREEN)
+            push_result = subprocess.run(["git", "push"], capture_output=True)
+            if push_result.returncode != 0:
+                color_print(f"[!] Push failed: {push_result.stderr.decode()}", Fore.YELLOW)
+            else:
+                color_print("[✓] Committed and pushed.", Fore.GREEN)
         else:
             color_print("[*] No changes to commit.", Fore.CYAN)
     except subprocess.CalledProcessError as e:
@@ -164,7 +167,6 @@ def main():
         color_print(f"\n[Batch {batch_num}] Working in batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
         batch_num += 1
 
-        # update README and commit
         color_print("[*] Updating README and committing...", Fore.CYAN)
         subprocess.run([sys.executable, "update_readme.py"], check=False)
         git_commit_push()
