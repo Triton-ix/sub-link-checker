@@ -100,4 +100,3 @@ if __name__ == "__main__":
     finally:
         # This prevents the window from closing immediately on Windows
         print(Fore.WHITE + "\n" + "="*50)
-        input(Fore.YELLOW + "Press ENTER to exit...")
