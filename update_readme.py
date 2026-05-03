@@ -1,25 +1,15 @@
 import os
 import json
+from datetime import datetime, timezone
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
 
-def persian_date_time():
-    """تبدیل UTC به ساعت تهران (ایران) و نمایش به صورت شمسی"""
-    try:
-        # نصب کتابخانه jdatetime اگر نصب نبود
-        subprocess.run([sys.executable, "-m", "pip", "install", "jdatetime"], capture_output=True)
-        import jdatetime
-        # زمان فعلی UTC را به منطقه تهران (UTC+3:30) تبدیل می‌کنیم
-        tehran_tz = timezone(timedelta(hours=3, minutes=30))
-        now_utc = datetime.now(timezone.utc)
-        now_tehran = now_utc.astimezone(tehran_tz)
-        # تبدیل به شمسی
-        shamsi = jdatetime.datetime.fromgregorian(datetime=now_tehran.replace(tzinfo=None))
-        return shamsi.strftime("%Y/%m/%d %H:%M:%S")
-    except:
-        # fallback
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
+# نصب jdatetime در صورت نبود (برای تبدیل به شمسی)
+try:
+    import jdatetime
+except ImportError:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'jdatetime'])
+    import jdatetime
 
 def read_file_lines(filename):
     if not os.path.exists(filename):
@@ -35,7 +25,8 @@ def get_link_stats():
         data = json.load(f)
     total_links = len(data)
     working_links = sum(1 for v in data.values() if v.get("success", False))
-    return total_links, working_links, total_links - working_links
+    dead_links = total_links - working_links
+    return total_links, working_links, dead_links
 
 def get_raw_total():
     stats_file = "link_stats.json"
@@ -49,49 +40,71 @@ def get_raw_total():
             total += v.get("configs_found", 0)
     return total
 
+def jalali_now():
+    """بازگرداندن تاریخ و زمان حال به شمسی (تهران)"""
+    now_utc = datetime.now(timezone.utc)
+    # ایران UTC+3:30 (بدون تغییر ساعت در تابستان - ساده‌سازی)
+    tehran_offset = 3.5
+    tehran_time = now_utc + timedelta(hours=tehran_offset)
+    # تبدیل به شمسی
+    jalali_dt = jdatetime.datetime.fromgregorian(datetime=tehran_time)
+    return jalali_dt.strftime("%Y/%m/%d - %H:%M:%S")
+
+# نیاز به timedelta برای محاسبه offset
+from datetime import timedelta
+
 def generate_readme():
+    # جمع‌آوری آمار
     total_links, working_links, dead_links = get_link_stats()
     raw_total = get_raw_total()
     unique_total = read_file_lines("cleaned_configs.txt")
     working_total = read_file_lines("success_config.txt")
     
-    # محاسبه درصدها
-    working_links_percent = (working_links / total_links * 100) if total_links > 0 else 0
-    dead_links_percent = (dead_links / total_links * 100) if total_links > 0 else 0
-    unique_percent = (unique_total / raw_total * 100) if raw_total > 0 else 0
     duplicate_count = raw_total - unique_total
-    duplicate_percent = (duplicate_count / raw_total * 100) if raw_total > 0 else 0
-    working_percent = (working_total / unique_total * 100) if unique_total > 0 else 0
-    dead_configs_percent = 100 - working_percent if unique_total > 0 else 0
+    bad_configs = unique_total - working_total
     
-    last_update_shamsi = persian_date_time()
+    # محاسبه درصدها (بر مبنای مناسب)
+    perc_working_links = (working_links / total_links * 100) if total_links else 0
+    perc_dead_links = (dead_links / total_links * 100) if total_links else 0
+    perc_unique = (unique_total / raw_total * 100) if raw_total else 0
+    perc_duplicate = (duplicate_count / raw_total * 100) if raw_total else 0
+    perc_working_configs = (working_total / unique_total * 100) if unique_total else 0
+    perc_bad_configs = (bad_configs / unique_total * 100) if unique_total else 0
     
+    last_update_jalali = jalali_now()
+    
+    # جدول بر اساس خواسته شما
     table = f"""
-## 🤖 این کدها با کمک **vibe coding** با نظارت انسانی و پیشنهادات هوش مصنوعی ساخته و بهینه‌سازی شده‌اند.
+## 🤖 تولید شده با Vibe Coding
+این کدها با کمک **Vibe Coding**، نظارت انسانی و پیشنهادات هوش مصنوعی ساخته و بهینه‌سازی شده‌اند.
 
-## 📊 گزارش خودکار وضعیت کانفیگ‌ها (به‌روزرسانی خودکار هر ۲۴ ساعت)
+### 📡 لینک‌های ساب‌اسکریپشن
+لینک‌های اشتراک (ساب‌اسکریپشن) به صورت خودکار از مخازن عمومی گیت‌هاب که محتوای مرتبط با ایران دارند و در ۱۵ روز گذشته به‌روز شده‌اند، استخراج می‌شوند. سپس با بررسی مستقیم هر لینک (درخواست HEAD) لینک‌های معتبر در فایل `pool_address.txt` ذخیره می‌گردند. این فرآیند هر ۵ روز یکبار انجام می‌شود.
 
-**📅 آخرین بروزرسانی (به وقت تهران):** {last_update_shamsi}
+---
 
-| آیتم | 🔗 کل لینک‌های ساب‌اسکریپشن پیدا شده | ✅ لینک‌های دارای کانفیگ واقعی | ❌ لینک‌های خراب | 📥 کل کانفیگ‌های استخراج شده | 🗑️ تعداد کانفیگ‌های تکراری حذف شده | 🔄 کل کانفیگ‌های بدون تکرار | 🔴 کل کانفیگ‌های خراب | 🟢 کل کانفیگ‌های سالم و تست شده |
-|------|------|------|------|------|------|------|------|------|
-| تعداد | {total_links} | {working_links} | {dead_links} | {raw_total} | {duplicate_count} | {unique_total} | {unique_total - working_total} | {working_total} |
-| درصد | 100% | {working_links_percent:.1f}% | {dead_links_percent:.1f}% | 100% | {duplicate_percent:.1f}% | {unique_percent:.1f}% | {dead_configs_percent:.1f}% | {working_percent:.1f}% |
+**📅 آخرین بروزرسانی (به وقت تهران):** {last_update_jalali}
 
-### 🧪 روش تست
-- هر کانفیگ با ارسال درخواست HTTP به آدرس `host:port` تست می‌شود.
+| آیتم | 🔗 کل لینکهای ساب‌اسکریپشن پیدا شده | ✅ لینک‌های دارای کانفیگ واقعی | ❌ لینک‌های خراب | 📥 کل کانفیگ‌های استخراج شده | 🗑️ تعداد کانفیگ‌های تکراری حذف شده | 🔄 کل کانفیگ‌های بدون تکرار | 🔴 کل کانفیگ‌های خراب | 🟢 کل کانفیگ‌های سالم و تست شده |
+|------|-----------------------------------|----------------------------------|----------------|----------------------------|----------------------------------|---------------------------|-----------------------|----------------------------------|
+| **تعداد** | {total_links} | {working_links} | {dead_links} | {raw_total} | {duplicate_count} | {unique_total} | {bad_configs} | {working_total} |
+| **درصد** | 100% | {perc_working_links:.1f}% | {perc_dead_links:.1f}% | 100% | {perc_duplicate:.1f}% | {perc_unique:.1f}% | {perc_bad_configs:.1f}% | {perc_working_configs:.1f}% |
+
+> **نکته:** درصد کانفیگ‌های سالم و خراب نسبت به کل کانفیگ‌های بدون تکرار (ستون `🔄 کل کانفیگ‌های بدون تکرار`) محاسبه شده است.
+
+### 🧪 روش تست کانفیگ‌ها
+- هر کانفیگ با ارسال درخواست HTTP به آدرس `host:port` در کمتر از ۱ ثانیه تست می‌شود.
 - کد پاسخ کمتر از 500 به معنی سالم بودن است.
-- تعداد همزمانی در تست: ۱۰ رشته (برای سرعت بالا و جلوگیری از بلاک)
-- فاصله تصادفی بین بسته‌های ۷۰۰۰ تایی: ۱ تا ۲ ثانیه
-- بعد از هر بسته ۷۰۰۰ کانفیگ، نتایج در مخزن ذخیره می‌شود.
+- تعداد همزمانی: ۱۰ رشته (برای سرعت بالا و جلوگیری از بلاک شدن IP)
+- هر ۷۰۰۰ کانفیگ، نتایج میانی در مخزن ذخیره می‌شوند.
 
 ### 📁 فایل‌های خروجی
-- `cleaned_configs.txt` → همه کانفیگ‌های یکتا (بدون تکرار)
-- `success_config.txt` → فقط کانفیگ‌های سالم (به‌تدریج append می‌شود)
-- `link_stats.json` → جزئیات وضعیت هر لینک اشتراک
-- `pool_address.txt` → لیست لینک‌های ساب‌اسکریپشن (هر ۵ روز به‌روز می‌شود)
+- `cleaned_configs.txt` ← همه کانفیگ‌های یکتا (بدون تکرار)
+- `success_config.txt` ← فقط کانفیگ‌های سالم (به‌تدریج append می‌شود)
+- `link_stats.json` ← جزئیات وضعیت هر لینک اشتراک
+- `pool_address.txt` ← لیست لینک‌های ساب‌اسکریپشن (بروزرسانی هر ۵ روز)
 
-> این گزارش به‌طور خودکار هر ۲۴ ساعت یکبار تولید می‌شود و در میانه کار نیز به‌روز می‌گردد.
+> این گزارش هر ۲۴ ساعت یکبار به‌روز می‌شود و در میانه‌ی تست کانفیگ‌ها (هر ۷۰۰۰ کانفیگ) نیز نتایج در مخزن commit می‌گردد.
 """
     with open("README.md", "w", encoding='utf-8') as f:
         f.write(table)
