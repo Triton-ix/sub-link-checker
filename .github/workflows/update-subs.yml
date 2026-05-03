@@ -26,9 +26,9 @@ jobs:
       - name: نصب کتابخانه‌های مورد نیاز
         run: |
           python -m pip install --upgrade pip
-          pip install requests colorama
+          pip install requests beautifulsoup4 colorama
 
-      - name: اعتبارسنجی و به‌روزرسانی لینک‌های ساب‌اسکریپشن
+      - name: جستجو و به‌روزرسانی لینک‌های ساب‌اسکریپشن
         run: python find_sub_links.py
 
       - name: ذخیره تغییرات در مخزن
