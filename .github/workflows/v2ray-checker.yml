@@ -2,8 +2,8 @@ name: V2Ray Link Cleaner & Tester
 
 on:
   schedule:
-    - cron: '0 0 * * *'      # هر ۲۴ ساعت یکبار
-  workflow_dispatch:            # قابلیت اجرای دستی
+    - cron: '0 0 * * *'        # هر روز ساعت 00:00 UTC
+  workflow_dispatch:            # اجرای دستی
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -28,16 +28,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests colorama urllib3
 
-      - name: مرحله ۱ - پاکسازی و استخراج کانفیگ‌ها
+      - name: مرحله ۱ - استخراج و پاکسازی کانفیگ‌ها
         run: python sub_link_checker.py
 
-      - name: مرحله ۲ - تست کانفیگ‌ها و استخراج سالم‌ها
+      - name: مرحله ۲ - تست واقعی کانفیگ‌ها
         run: python success_config.py
 
-      - name: ذخیره خودکار هر دو فایل خروجی در مخزن
+      - name: مرحله ۳ - تولید گزارش README.md
+        run: python update_readme.py
+
+      - name: ذخیره خودکار همه فایل‌ها در مخزن
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add cleaned_configs.txt success_config.txt
-          git diff --staged --quiet || git commit -m "Auto-update configs - $(date '+%Y-%m-%d %H:%M:%S')"
+          git add cleaned_configs.txt success_config.txt link_stats.json README.md
+          git diff --staged --quiet || git commit -m "Auto-update configs and report - $(date '+%Y-%m-%d %H:%M:%S')"
           git push
