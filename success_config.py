@@ -5,7 +5,6 @@ import json
 import time
 import random
 import signal
-import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import init, Fore, Style
 
@@ -26,7 +25,6 @@ import requests
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Header شبیه مرورگر
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
@@ -36,26 +34,22 @@ stop_testing = False
 def signal_handler(sig, frame):
     global stop_testing
     stop_testing = True
-    print("\n")
-    print(Fore.YELLOW + "[!] Ctrl+C detected. Stopping tests and saving current working configs...")
+    print("\n" + Fore.YELLOW + "[!] Ctrl+C detected. Saving current results...")
 
 signal.signal(signal.SIGINT, signal_handler)
 
 def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
-def save_config_immediately(config, output_file='success_config.txt'):
-    with open(output_file, 'a', encoding='utf-8') as f:
-        f.write(config + '\n')
-
-def test_v2ray_config(config_line, timeout=2):
+def test_single_config(config_line, timeout=3):
+    """تست یک کانفیگ و بازگرداندن (config, working)"""
     if stop_testing:
-        return None, False
+        return config_line, False
     try:
         if not config_line.strip():
-            return None, False
-        # استخراج host و port از پروتکل‌های مختلف
+            return config_line, False
         host, port = None, None
+        # استخراج host:port بر اساس پروتکل
         if config_line.startswith('vless://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
@@ -68,22 +62,25 @@ def test_v2ray_config(config_line, timeout=2):
             encoded = config_line.replace('vmess://', '')
             decoded = base64.b64decode(encoded).decode('utf-8')
             config = json.loads(decoded)
-            host, port = config.get('add'), str(config.get('port'))
+            host = config.get('add')
+            port = str(config.get('port'))
         elif config_line.startswith('trojan://') or config_line.startswith('ss://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
-            host, port = parsed.hostname, parsed.port
+            host = parsed.hostname
+            port = parsed.port
         if host and port:
-            # تست واقعی‌تر: درخواست به یک آدرس معتبر اینترنتی
             test_url = f"http://{host}:{port}/"
-            # استفاده از timeout کوتاه و Header
-            response = requests.get(test_url, timeout=timeout, headers=HEADERS, verify=False)
-            if response.status_code < 500:
-                # تأخیر تصادفی قبل از تست بعدی برای طبیعی‌تر جلوه کردن
-                time.sleep(random.uniform(0.1, 0.5))
-                return config_line, True
+            # استفاده از session برای بهبود کارایی
+            with requests.Session() as session:
+                session.headers.update(HEADERS)
+                session.verify = False
+                resp = session.get(test_url, timeout=timeout)
+                if resp.status_code < 500:
+                    time.sleep(random.uniform(0.05, 0.2))  # تأخیر خیلی کم
+                    return config_line, True
         return config_line, False
-    except:
+    except Exception:
         return config_line, False
 
 def read_configs(filename):
@@ -94,56 +91,80 @@ def read_configs(filename):
         color_print(f"Error: {filename} not found!", Fore.RED)
         return []
 
-def init_output_file(output_file='success_config.txt'):
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('')
+def append_working_config(config, output_file):
+    """نوشتن یک کانفیگ سالم به فایل (با قفل ساده - چون تک‌رشته‌ای append می‌کنیم)"""
+    with open(output_file, 'a', encoding='utf-8') as f:
+        f.write(config + '\n')
 
 def main():
     color_print("=" * 60, Fore.CYAN)
-    color_print("V2RAY CONFIGURATION TESTER (REALISTIC MODE)", Fore.YELLOW, Style.BRIGHT)
+    color_print("V2RAY CONFIGURATION TESTER (BATCH PROCESSING)", Fore.YELLOW, Style.BRIGHT)
     color_print("=" * 60, Fore.CYAN)
 
     input_file = 'cleaned_configs.txt'
     output_file = 'success_config.txt'
-
+    
+    # حذف فایل قبلی برای شروع تازه
+    if os.path.exists(output_file):
+        os.remove(output_file)
+    
     configs = read_configs(input_file)
     if not configs:
-        color_print("No configurations found or file is empty!", Fore.RED)
+        color_print("No configurations found!", Fore.RED)
         sys.exit(1)
 
-    color_print(f"\n[*] Found {len(configs)} unique configs to test", Fore.GREEN)
-    init_output_file(output_file)
-
-    color_print(f"[*] Testing with {5} parallel workers (to avoid blocking)...\n", Fore.CYAN)
-
-    working_count = 0
     total = len(configs)
-    completed = 0
-    global stop_testing
-    stop_testing = False
-
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        future_to_config = {executor.submit(test_v2ray_config, config): config for config in configs}
-        for future in as_completed(future_to_config):
-            if stop_testing:
-                executor.shutdown(wait=False, cancel_futures=True)
-                break
-            config, is_working = future.result()
-            completed += 1
-            if is_working:
-                working_count += 1
-                save_config_immediately(config, output_file)
-                status = "✓"
-                color_status = Fore.GREEN
-            else:
-                status = "✗"
-                color_status = Fore.RED
-            percent = (working_count / completed * 100) if completed > 0 else 0
-            print(f"\r[{completed}/{total} ({percent:.1f}%)] Working: {working_count}  {color_status}{status}{Style.RESET_ALL}", end='', flush=True)
-
+    color_print(f"[*] Total unique configs to test: {total}", Fore.GREEN)
+    
+    # پارامترهای بهینه
+    BATCH_SIZE = 500        # هر دسته ۵۰۰ تایی
+    MAX_WORKERS = 3         # تعداد همزمانی کم برای جلوگیری از بلاک
+    WORKER_TIMEOUT = 5      # timeout کلی برای هر future
+    
+    working_total = 0
+    processed = 0
+    batch_num = 1
+    
+    # پردازش به صورت دسته‌ای
+    for start in range(0, total, BATCH_SIZE):
+        if stop_testing:
+            break
+        end = min(start + BATCH_SIZE, total)
+        batch_configs = configs[start:end]
+        batch_working = 0
+        
+        color_print(f"\n[Batch {batch_num}] Testing configs {start+1} to {end} ({len(batch_configs)} items)...", Fore.CYAN)
+        
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            future_to_config = {executor.submit(test_single_config, cfg): cfg for cfg in batch_configs}
+            for future in as_completed(future_to_config, timeout=WORKER_TIMEOUT):
+                if stop_testing:
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    break
+                try:
+                    cfg, is_working = future.result(timeout=WORKER_TIMEOUT)
+                except Exception:
+                    cfg = future_to_config[future]
+                    is_working = False
+                
+                processed += 1
+                if is_working:
+                    working_total += 1
+                    batch_working += 1
+                    append_working_config(cfg, output_file)
+                
+                # نمایش پیشرفت کلی
+                percent = (working_total / processed * 100) if processed > 0 else 0
+                status = "✓" if is_working else "✗"
+                color = Fore.GREEN if is_working else Fore.RED
+                print(f"\r[{processed}/{total} ({percent:.1f}%)] Working: {working_total}  {color}{status}{Style.RESET_ALL}", end='', flush=True)
+        
+        color_print(f"\n[Batch {batch_num}] Completed. Working in this batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
+        batch_num += 1
+    
     print()
-    color_print(f"\n[✓] Testing completed. Working configs: {working_count}/{total}", Fore.GREEN)
-    if working_count > 0:
+    color_print(f"\n[✓] Testing completed. Total working configs: {working_total}/{total}", Fore.GREEN)
+    if working_total > 0:
         color_print(f"[✓] Saved to {output_file}", Fore.GREEN)
     else:
         color_print("[!] No working configs found", Fore.RED)
@@ -156,3 +177,4 @@ if __name__ == "__main__":
         color_print("\n[!] Interrupted. Already saved working configs.", Fore.YELLOW)
     except Exception as e:
         color_print(f"\n[ERROR] {e}", Fore.RED)
+        sys.exit(1)
