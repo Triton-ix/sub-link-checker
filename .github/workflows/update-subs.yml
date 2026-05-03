@@ -29,9 +29,9 @@ jobs:
           pip install requests colorama
 
       - name: جستجو و به‌روزرسانی لینک‌های ساب‌اسکریپشن
-        run: python find_sub_links.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python find_sub_links.py
 
       - name: ذخیره تغییرات در مخزن
         run: |
