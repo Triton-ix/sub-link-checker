@@ -31,7 +31,7 @@ jobs:
       - name: مرحله ۱ - استخراج و پاکسازی کانفیگ‌ها
         run: python sub_link_checker.py
 
-      - name: مرحله ۲ - تست واقعی کانفیگ‌ها
+      - name: مرحله ۲ - تست واقعی کانفیگ‌ها (بسته‌بندی شده)
         run: python success_config.py
 
       - name: مرحله ۳ - تولید گزارش README.md
