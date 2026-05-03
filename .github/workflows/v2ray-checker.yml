@@ -2,8 +2,8 @@ name: V2Ray Link Cleaner & Tester
 
 on:
   schedule:
-    - cron: '0 0 * * *'        # هر روز ساعت 00:00 UTC
-  workflow_dispatch:            # اجرای دستی
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -31,16 +31,16 @@ jobs:
       - name: مرحله ۱ - استخراج و پاکسازی کانفیگ‌ها
         run: python sub_link_checker.py
 
-      - name: مرحله ۲ - تست واقعی کانفیگ‌ها (بسته‌بندی شده)
+      - name: مرحله ۲ - تست واقعی کانفیگ‌ها (با commit خودکار)
         run: python success_config.py
 
-      - name: مرحله ۳ - تولید گزارش README.md
+      - name: مرحله ۳ - تولید نهایی README.md (اختیاری)
         run: python update_readme.py
 
-      - name: ذخیره خودکار همه فایل‌ها در مخزن
+      - name: ذخیره نهایی همه فایل‌ها
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add cleaned_configs.txt success_config.txt link_stats.json README.md
-          git diff --staged --quiet || git commit -m "Auto-update configs and report - $(date '+%Y-%m-%d %H:%M:%S')"
+          git diff --staged --quiet || git commit -m "Final update - $(date '+%Y-%m-%d %H:%M:%S')"
           git push
