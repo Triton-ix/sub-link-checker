@@ -2,17 +2,24 @@ import os
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone, timedelta
-import jdatetime  # نیاز به نصب دارد
+from datetime import datetime, timedelta, timezone
 
-def install_jdatetime():
+def persian_date_time():
+    """تبدیل UTC به ساعت تهران (ایران) و نمایش به صورت شمسی"""
     try:
-        __import__('jdatetime')
-    except ImportError:
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'jdatetime'])
-
-install_jdatetime()
-import jdatetime
+        # نصب کتابخانه jdatetime اگر نصب نبود
+        subprocess.run([sys.executable, "-m", "pip", "install", "jdatetime"], capture_output=True)
+        import jdatetime
+        # زمان فعلی UTC را به منطقه تهران (UTC+3:30) تبدیل می‌کنیم
+        tehran_tz = timezone(timedelta(hours=3, minutes=30))
+        now_utc = datetime.now(timezone.utc)
+        now_tehran = now_utc.astimezone(tehran_tz)
+        # تبدیل به شمسی
+        shamsi = jdatetime.datetime.fromgregorian(datetime=now_tehran.replace(tzinfo=None))
+        return shamsi.strftime("%Y/%m/%d %H:%M:%S")
+    except:
+        # fallback
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
 
 def read_file_lines(filename):
     if not os.path.exists(filename):
@@ -42,65 +49,53 @@ def get_raw_total():
             total += v.get("configs_found", 0)
     return total
 
-def get_iran_time():
-    """بازگرداندن زمان حال به هجری شمسی و ساعت ایران (UTC+3:30)"""
-    utc_now = datetime.now(timezone.utc)
-    iran_tz = timezone(timedelta(hours=3, minutes=30))
-    iran_now = utc_now.astimezone(iran_tz)
-    # تبدیل به شمسی
-    shamsi = jdatetime.datetime.fromgregorian(datetime=iran_now.replace(tzinfo=None))
-    return shamsi.strftime("%Y/%m/%d %H:%M:%S")
-
 def generate_readme():
     total_links, working_links, dead_links = get_link_stats()
     raw_total = get_raw_total()
     unique_total = read_file_lines("cleaned_configs.txt")
     working_total = read_file_lines("success_config.txt")
     
-    # محاسبه درصدها بر اساس تعداد کل کانفیگ‌های یکتا به عنوان مبنا
-    unique_base = unique_total if unique_total > 0 else 1
+    # محاسبه درصدها
+    working_links_percent = (working_links / total_links * 100) if total_links > 0 else 0
+    dead_links_percent = (dead_links / total_links * 100) if total_links > 0 else 0
+    unique_percent = (unique_total / raw_total * 100) if raw_total > 0 else 0
     duplicate_count = raw_total - unique_total
     duplicate_percent = (duplicate_count / raw_total * 100) if raw_total > 0 else 0
-    working_percent = (working_total / unique_base * 100)
-    dead_configs_percent = 100 - working_percent
+    working_percent = (working_total / unique_total * 100) if unique_total > 0 else 0
+    dead_configs_percent = 100 - working_percent if unique_total > 0 else 0
     
-    last_update = get_iran_time()
+    last_update_shamsi = persian_date_time()
     
-    # جدول به صورت افقی (یک ردیف با چند ستون)
-    # برای خوانایی، در Markdown می‌توانیم چند ردیف بسازیم یا یک ردیف طولانی با جداکننده
-    # بهترین شکل: یک جدول با دو ردیف: ردیف اول عنوان، ردیف دوم مقادیر
     table = f"""
-## 🤖 تولید شده با vibe coding
-این کدها با کمک **vibe coding** با نظارت انسانی و پیشنهادات هوش مصنوعی ساخته و بهینه‌سازی شده‌اند.
+## 🤖 این کدها با کمک **vibe coding** با نظارت انسانی و پیشنهادات هوش مصنوعی ساخته و بهینه‌سازی شده‌اند.
 
-## 📊 گزارش خودکار وضعیت کانفیگ‌ها (به‌روزرسانی خودکار)
+## 📊 گزارش خودکار وضعیت کانفیگ‌ها (به‌روزرسانی خودکار هر ۲۴ ساعت)
 
-**📅 آخرین بروزرسانی (به وقت تهران):** {last_update}
+**📅 آخرین بروزرسانی (به وقت تهران):** {last_update_shamsi}
 
-| آیتم | 🔗 لینک‌های اشتراک (کل) | ✅ لینک‌های فعال | ❌ لینک‌های غیرفعال | 📥 کانفیگ خام استخراج شده | 🔄 کانفیگ یکتا (بدون تکرار) | 🗑️ کانفیگ تکراری حذف شده | 🟢 کانفیگ سالم (تست شده) | 🔴 کانفیگ خراب |
-|------|------------------------|----------------|--------------------|--------------------------|---------------------------|--------------------------|------------------------|----------------|
-| تعداد | {total_links} | {working_links} | {dead_links} | {raw_total} | {unique_total} | {duplicate_count} | {working_total} | {unique_total - working_total} |
-| درصد | 100% | {(working_links/total_links*100) if total_links>0 else 0:.1f}% | {(dead_links/total_links*100) if total_links>0 else 0:.1f}% | 100% | {(unique_total/raw_total*100) if raw_total>0 else 0:.1f}% | {duplicate_percent:.1f}% | {working_percent:.1f}% | {dead_configs_percent:.1f}% |
+| آیتم | 🔗 کل لینک‌های ساب‌اسکریپشن پیدا شده | ✅ لینک‌های دارای کانفیگ واقعی | ❌ لینک‌های خراب | 📥 کل کانفیگ‌های استخراج شده | 🗑️ تعداد کانفیگ‌های تکراری حذف شده | 🔄 کل کانفیگ‌های بدون تکرار | 🔴 کل کانفیگ‌های خراب | 🟢 کل کانفیگ‌های سالم و تست شده |
+|------|------|------|------|------|------|------|------|------|
+| تعداد | {total_links} | {working_links} | {dead_links} | {raw_total} | {duplicate_count} | {unique_total} | {unique_total - working_total} | {working_total} |
+| درصد | 100% | {working_links_percent:.1f}% | {dead_links_percent:.1f}% | 100% | {duplicate_percent:.1f}% | {unique_percent:.1f}% | {dead_configs_percent:.1f}% | {working_percent:.1f}% |
 
 ### 🧪 روش تست
-- هر کانفیگ با ارسال درخواست HTTP به آدرس `host:port` تست می‌شود (timeout 1 ثانیه)
+- هر کانفیگ با ارسال درخواست HTTP به آدرس `host:port` تست می‌شود.
 - کد پاسخ کمتر از 500 به معنی سالم بودن است.
-- تعداد همزمانی در تست: ۱۰ رشته
+- تعداد همزمانی در تست: ۱۰ رشته (برای سرعت بالا و جلوگیری از بلاک)
 - فاصله تصادفی بین بسته‌های ۷۰۰۰ تایی: ۱ تا ۲ ثانیه
 - بعد از هر بسته ۷۰۰۰ کانفیگ، نتایج در مخزن ذخیره می‌شود.
-- لینک‌های اشتراک هر ۵ روز یکبار از گیت‌هاب جمع‌آوری می‌شوند (شرط: اشاره به ایران و آپدیت کمتر از ۱۵ روز).
 
 ### 📁 فایل‌های خروجی
 - `cleaned_configs.txt` → همه کانفیگ‌های یکتا (بدون تکرار)
 - `success_config.txt` → فقط کانفیگ‌های سالم (به‌تدریج append می‌شود)
-- `pool_address.txt` → لینک‌های ساب‌اسکریپشن (خودکار به‌روز می‌شود)
 - `link_stats.json` → جزئیات وضعیت هر لینک اشتراک
+- `pool_address.txt` → لیست لینک‌های ساب‌اسکریپشن (هر ۵ روز به‌روز می‌شود)
 
-> این گزارش به‌طور خودکار هر ۲۴ ساعت یکبار تولید می‌شود.
+> این گزارش به‌طور خودکار هر ۲۴ ساعت یکبار تولید می‌شود و در میانه کار نیز به‌روز می‌گردد.
 """
     with open("README.md", "w", encoding='utf-8') as f:
         f.write(table)
-    print("README.md successfully generated with Persian date and horizontal table.")
+    print("README.md successfully generated!")
 
 if __name__ == "__main__":
     generate_readme()
