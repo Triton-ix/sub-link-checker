@@ -1,35 +1,40 @@
 name: V2Ray Link Cleaner
 
 on:
-  # اجرای زمان‌بندی شده هر ۵ ساعت یکبار (UTC)
-  # توی این تنظیمات، اجرا در ساعت‌های 0، 5، 10، 15، 20 (به وقت جهانی)
-  # یعنی طبق فرمت cron: دقیقه 0 از هر ساعت 5 ام
   schedule:
-    - cron: '0 */5 * * *'   # هر ۵ ساعت یکبار
-  # دکمه اجرای دستی (برای تست)
-  workflow_dispatch:
+    - cron: '0 */5 * * *'      # هر ۵ ساعت یکبار
+  workflow_dispatch:            # اجازه اجرای دستی
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # رفع اخطار Node.js
 
 jobs:
   run-checker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write            # اجازه نوشتن در مخزن (برای push)
 
     steps:
-      - name: 📥 دریافت کد از مخزن
+      - name: دریافت کد از مخزن
         uses: actions/checkout@v4
 
-      - name: 🐍 نصب پایتون
+      - name: نصب پایتون
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 📦 نصب وابستگی‌ها
-        run: pip install -r requirements.txt
+      - name: نصب کتابخانه‌های مورد نیاز
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests colorama
 
-      - name: 🚀 اجرای چکر لینک‌ها
+      - name: اجرای چکر لینک‌ها
         run: python sub_link_checker.py
 
-      - name: 💾 ذخیره خروجی (اختیاری)
-        uses: actions/upload-artifact@v4
-        with:
-          name: cleaned-configs
-          path: cleaned_configs.txt
+      - name: ذخیره خودکار فایل خروجی در مخزن
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add cleaned_configs.txt
+          git diff --staged --quiet || git commit -m "Auto-update cleaned configs - $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
