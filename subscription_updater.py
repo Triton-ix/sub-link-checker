@@ -1,0 +1,366 @@
+import requests
+import re
+import time
+from datetime import datetime, timedelta
+from urllib.parse import urljoin
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from bs4 import BeautifulSoup
+import calendar
+
+class V2RaySubscriptionFinder:
+    def __init__(self):
+        self.session = requests.Session()
+        self.session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+        })
+        self.subscription_links = set()
+        self.seen_repos = set()
+        
+        self.iran_keywords = ['iran', 'ایران', 'ir', 'persia', 'فارس', 'tehran', 'تهران', 'islamic republic', 'khuzestan', 'farsi']
+        
+        self.sub_patterns = [
+            r'(https?://raw\.githubusercontent\.com/[^\s"\'<>]+\.(txt|json|yml|yaml|link))',
+            r'(https?://github\.com/[^\s"\'<>]+/raw/[^\s"\'<>]+)',
+            r'subscription[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'sub[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'اشتراک[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'لینک[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'v2ray[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'vless[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'vmess[\s:]*[\'"]?(https?://[^\s\'"]+)[\'"]?',
+            r'config.*[\'"]?(https?://raw\.githubusercontent\.com[^\s\'"]+)[\'"]?',
+        ]
+
+    # ---------- Date parsing utilities (robust day/month/year detection) ----------
+    def _parse_relative_date(self, text):
+        """Parse strings like '2 days ago', '3 months ago', 'last week'"""
+        text = text.lower()
+        now = datetime.now()
+        # days ago
+        match = re.search(r'(\d+)\s+day[s]?\s+ago', text)
+        if match:
+            days = int(match.group(1))
+            return now - timedelta(days=days)
+        # months ago (approximate, using 30 days per month)
+        match = re.search(r'(\d+)\s+month[s]?\s+ago', text)
+        if match:
+            months = int(match.group(1))
+            return now - timedelta(days=months*30)
+        # years ago
+        match = re.search(r'(\d+)\s+year[s]?\s+ago', text)
+        if match:
+            years = int(match.group(1))
+            return now - timedelta(days=years*365)
+        # yesterday
+        if 'yesterday' in text:
+            return now - timedelta(days=1)
+        # today
+        if 'today' in text:
+            return now
+        return None
+
+    def _parse_absolute_date(self, date_str):
+        """Parse various absolute date formats including YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY, etc."""
+        date_str = date_str.strip()
+        # Try ISO 8601 (with time and timezone)
+        try:
+            # GitHub API format: 2025-04-20T12:34:56Z
+            if 'T' in date_str:
+                return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        except:
+            pass
+        
+        # Common patterns
+        patterns = [
+            (r'(\d{4})-(\d{1,2})-(\d{1,2})', '%Y-%m-%d'),           # 2025-04-20
+            (r'(\d{1,2})/(\d{1,2})/(\d{4})', '%m/%d/%Y'),           # 04/20/2025
+            (r'(\d{1,2})/(\d{1,2})/(\d{4})', '%d/%m/%Y'),           # 20/04/2025
+            (r'(\d{1,2})-(\d{1,2})-(\d{4})', '%m-%d-%Y'),           # 04-20-2025
+            (r'(\d{1,2})-(\d{1,2})-(\d{4})', '%d-%m-%Y'),           # 20-04-2025
+            (r'(\d{4})/(\d{1,2})/(\d{1,2})', '%Y/%m/%d'),           # 2025/04/20
+            (r'(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})', '%d %b %Y'),     # 20 Apr 2025
+            (r'([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})', '%b %d %Y'),    # Apr 20, 2025
+        ]
+        for pat, fmt in patterns:
+            match = re.search(pat, date_str)
+            if match:
+                try:
+                    return datetime.strptime(match.group(0), fmt)
+                except:
+                    continue
+        return None
+
+    def parse_date(self, date_string):
+        """Main date parser that handles both absolute and relative dates"""
+        if not date_string:
+            return None
+        # First check if relative
+        rel_date = self._parse_relative_date(date_string)
+        if rel_date:
+            return rel_date
+        # Then absolute
+        abs_date = self._parse_absolute_date(date_string)
+        if abs_date:
+            return abs_date
+        return None
+
+    def is_within_15_days(self, date_obj):
+        """Check if given datetime is within last 15 days"""
+        if not date_obj:
+            return False
+        now = datetime.now(date_obj.tzinfo) if date_obj.tzinfo else datetime.now()
+        return (now - date_obj) <= timedelta(days=15)
+
+    # ---------- GitHub search and extraction ----------
+    def search_github_repos(self, max_pages=5):
+        repos = []
+        search_queries = [
+            'v2ray subscription iran', 'v2ray config iran', 'v2ray reality iran',
+            'کانفیگ v2ray ایران', 'v2ray free config', 'v2ray subscription link',
+            'v2ray collector', 'v2ray configs daily', 'iran v2ray configs',
+            'v2ray sub', 'vless subscription', 'vmess subscription',
+        ]
+        
+        for q in search_queries:
+            for page in range(1, max_pages + 1):
+                try:
+                    url = f'https://api.github.com/search/repositories?q={q}&page={page}&per_page=30&sort=updated&order=desc'
+                    resp = self.session.get(url, timeout=15)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        for repo in data.get('items', []):
+                            repo_name = repo['full_name']
+                            if repo_name not in self.seen_repos:
+                                self.seen_repos.add(repo_name)
+                                repos.append({
+                                    'name': repo_name,
+                                    'url': repo['html_url'],
+                                    'description': repo.get('description', ''),
+                                    'updated_at': repo.get('updated_at', ''),
+                                })
+                    elif resp.status_code == 403:
+                        self._scrape_github_search(q, page, repos)
+                    time.sleep(1.2)
+                except Exception as e:
+                    print(f"Search error: {e}")
+        return repos
+
+    def _scrape_github_search(self, query, page, repos):
+        try:
+            url = f'https://github.com/search?q={query}&type=repositories&p={page}'
+            resp = self.session.get(url, timeout=15)
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            for link in soup.select('a[href^="/"][href*="/"]'):
+                href = link.get('href')
+                if href and '/tree/' not in href and len(href.split('/')) == 3:
+                    full_name = href.strip('/')
+                    if full_name not in self.seen_repos:
+                        self.seen_repos.add(full_name)
+                        repos.append({
+                            'name': full_name,
+                            'url': f'https://github.com/{full_name}',
+                            'description': '',
+                            'updated_at': ''
+                        })
+        except Exception as e:
+            print(f"Scraping error: {e}")
+
+    def _has_iran_or_persian(self, text, soup):
+        lower_text = text.lower()
+        if any(kw in lower_text for kw in self.iran_keywords):
+            return True
+        if re.search(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]', text):
+            return True
+        title = soup.find('title')
+        if title and re.search(r'[\u0600-\u06FF]', title.get_text()):
+            return True
+        return False
+
+    def _get_last_commit_date(self, repo_url):
+        """Get last commit date of the repository via GitHub API"""
+        try:
+            api_url = repo_url.replace('github.com', 'api.github.com/repos')
+            commits_url = f'{api_url}/commits?per_page=1'
+            resp = self.session.get(commits_url, timeout=10)
+            if resp.status_code == 200:
+                commits = resp.json()
+                if commits:
+                    date_str = commits[0]['commit']['author']['date']
+                    return self.parse_date(date_str)
+        except:
+            pass
+        return None
+
+    def _get_last_update_from_page(self, soup):
+        """Extract relative-time or any date-like element from GitHub HTML page"""
+        # Find <relative-time> tag used by GitHub
+        rel_time = soup.find('relative-time')
+        if rel_time and rel_time.get('datetime'):
+            return self.parse_date(rel_time['datetime'])
+        # Look for any text containing date patterns
+        for text in soup.stripped_strings:
+            if 'ago' in text or 'yesterday' in text or 'today' in text:
+                d = self.parse_date(text)
+                if d:
+                    return d
+            # Try to find absolute dates
+            d = self._parse_absolute_date(text)
+            if d:
+                return d
+        return None
+
+    def _extract_links_from_repo(self, repo_url):
+        links = set()
+        repo_path = repo_url.replace('https://github.com/', '')
+        paths_to_check = [
+            'README.md', 'README_Fa.md', 'README_fa.md', 'README.fa.md',
+            'subscription.txt', 'sub.txt', 'config.txt', 'v2ray.txt',
+            'links.txt', 'urls.txt', 'sub.json', 'config.json', 'subscription.json',
+            'README', 'docs/README.md', 'docs/subscription.txt'
+        ]
+        
+        for branch in ['main', 'master']:
+            for path in paths_to_check:
+                raw_url = f'https://raw.githubusercontent.com/{repo_path}/{branch}/{path}'
+                try:
+                    resp = self.session.get(raw_url, timeout=10)
+                    if resp.status_code == 200:
+                        content = resp.text
+                        for pattern in self.sub_patterns:
+                            matches = re.findall(pattern, content, re.IGNORECASE)
+                            for m in matches:
+                                if isinstance(m, tuple):
+                                    m = m[0] if m else ''
+                                if m and m.startswith(('http://', 'https://')):
+                                    if 'raw.githubusercontent.com' in m:
+                                        links.add(m)
+                except:
+                    continue
+        return links
+
+    def _scan_repo_contents(self, repo_url):
+        links = set()
+        api_base = repo_url.replace('github.com', 'api.github.com/repos')
+        try:
+            repo_info = self.session.get(api_base, timeout=10)
+            if repo_info.status_code == 200:
+                default_branch = repo_info.json().get('default_branch', 'main')
+            else:
+                default_branch = 'main'
+        except:
+            default_branch = 'main'
+        
+        dirs_to_scan = ['', 'config', 'subscription', 'sub', 'links', 'docs', 'data', 'files']
+        for subdir in dirs_to_scan:
+            contents_url = f'{api_base}/contents/{subdir}?ref={default_branch}'
+            try:
+                resp = self.session.get(contents_url, timeout=10)
+                if resp.status_code == 200:
+                    items = resp.json()
+                    if isinstance(items, list):
+                        for item in items:
+                            if item['type'] == 'file':
+                                fname = item['name'].lower()
+                                if fname.endswith(('.txt', '.json', '.yaml', '.yml', '.md', '.link')):
+                                    raw_url = item['download_url']
+                                    if raw_url:
+                                        file_resp = self.session.get(raw_url, timeout=10)
+                                        if file_resp.status_code == 200:
+                                            content = file_resp.text
+                                            for pattern in self.sub_patterns:
+                                                matches = re.findall(pattern, content, re.IGNORECASE)
+                                                for m in matches:
+                                                    if isinstance(m, tuple):
+                                                        m = m[0] if m else ''
+                                                    if m and 'raw.githubusercontent.com' in m:
+                                                        links.add(m)
+            except:
+                continue
+        return links
+
+    def check_repository(self, repo_info):
+        repo_url = repo_info['url']
+        
+        # Condition 1: GitHub (already true)
+        try:
+            resp = self.session.get(repo_url, timeout=10)
+            if resp.status_code != 200:
+                return False
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            page_text = soup.get_text()
+            
+            # Condition 2: Iran / Persian reference
+            if not self._has_iran_or_persian(page_text, soup):
+                return False
+            
+            # Condition 3: recent update (within 15 days) - robust date parsing
+            # Try API first
+            last_date = self._get_last_commit_date(repo_url)
+            if not last_date:
+                # Fallback to parsing from HTML page
+                last_date = self._get_last_update_from_page(soup)
+            if not last_date:
+                # Use the updated_at from search result
+                last_date = self.parse_date(repo_info.get('updated_at', ''))
+            
+            if not last_date or not self.is_within_15_days(last_date):
+                return False
+            
+            # Extract subscription links
+            links = set()
+            links.update(self._extract_links_from_repo(repo_url))
+            links.update(self._scan_repo_contents(repo_url))
+            
+            if links:
+                self.subscription_links.update(links)
+                print(f"Found {len(links)} links in {repo_url} (last update: {last_date})")
+                return True
+        except Exception as e:
+            print(f"Error: {e}")
+        return False
+
+    def find_valid_subscriptions(self):
+        print("Searching GitHub...")
+        repos = self.search_github_repos(max_pages=5)
+        print(f"Found {len(repos)} candidate repositories. Checking conditions...")
+        
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = {executor.submit(self.check_repository, repo): repo for repo in repos}
+            for future in as_completed(futures):
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Processing error: {e}")
+        
+        return self.finalize_subscriptions()
+
+    def finalize_subscriptions(self):
+        valid_links = []
+        for link in self.subscription_links:
+            try:
+                head_resp = self.session.head(link, timeout=8)
+                if head_resp.status_code < 400:
+                    valid_links.append(link)
+            except:
+                pass
+        
+        unique_links = list(set(valid_links))
+        with open('pool_address.txt', 'w', encoding='utf-8') as f:
+            for link in unique_links:
+                f.write(link + '\n')
+        
+        print(f"\nDone. Saved {len(unique_links)} unique valid subscription links to pool_address.txt")
+        return unique_links
+
+def main():
+    finder = V2RaySubscriptionFinder()
+    links = finder.find_valid_subscriptions()
+    if links:
+        print("\nSample links:")
+        for link in links[:10]:
+            print(f"  {link}")
+
+if __name__ == "__main__":
+    main()
