@@ -21,7 +21,6 @@ from colorama import init, Fore, Style
 
 init(autoreset=True)
 
-# User-Agent شبیه مرورگر واقعی
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
@@ -47,7 +46,7 @@ def process_v2ray_links():
 
     all_configs_raw = []
     total_configs_found = 0
-    link_status = {}  # ذخیره وضعیت هر لینک
+    link_status = {}
 
     for index, url in enumerate(unique_urls, 1):
         print(Fore.BLUE + f"[{index}/{len(unique_urls)}] Fetching: {url[:50]}...")
@@ -63,10 +62,8 @@ def process_v2ray_links():
         except Exception as e:
             link_status[url] = {"success": False, "error": str(e)}
             print(Fore.RED + f"    -> [FAILED] Error: {e}")
-        # تأخیر تصادفی بین درخواست‌ها برای جلوگیری از مسدود شدن
         time.sleep(random.uniform(0.5, 1.5))
 
-    # ذخیره وضعیت لینک‌ها برای گزارش‌گیری بعدی
     with open(stats_file, 'w', encoding='utf-8') as f:
         json.dump(link_status, f, indent=2, ensure_ascii=False)
 
