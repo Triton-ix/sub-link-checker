@@ -23,22 +23,19 @@ from colorama import init, Fore, Style
 
 init(autoreset=True)
 
+# دریافت توکن از متغیر محیطی (تنظیم شده در workflow)
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+if not GITHUB_TOKEN:
+    print(Fore.RED + "[!] GITHUB_TOKEN not found. Search may fail.")
+
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
 }
+if GITHUB_TOKEN:
+    HEADERS['Authorization'] = f'token {GITHUB_TOKEN}'
 
 GITHUB_SEARCH_URL = "https://api.github.com/search/code"
 GITHUB_REPO_URL = "https://api.github.com/repos"
-
-def get_github_headers():
-    """بازگرداندن هدرهای درخواست به همراه توکن در صورت وجود"""
-    headers = HEADERS.copy()
-    token = os.environ.get('GITHUB_TOKEN')
-    if token:
-        headers['Authorization'] = f'token {token}'
-    else:
-        print("[!] GITHUB_TOKEN not found. API rate limit will be very low.")
-    return headers
 
 def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
@@ -49,29 +46,27 @@ def search_github_sub_links():
     color_print("="*60 + "\n", Fore.CYAN)
     
     queries = [
-        "v2ray subscription link",
         "vmess://",
         "vless://",
         "trojan://",
         "ss://",
         "sub.txt v2ray",
-        "config.txt v2ray",
-        "clash.yaml v2ray"
+        "config.txt v2ray"
     ]
     
     found_raw_links = []
-    headers = get_github_headers()
     
     for query in queries:
         page = 1
-        while page <= 3:
+        while page <= 2:  # حداکثر ۲ صفحه برای جلوگیری از rate limit
             params = {'q': query, 'per_page': 30, 'page': page}
             try:
-                resp = requests.get(GITHUB_SEARCH_URL, headers=headers, params=params, timeout=10)
+                resp = requests.get(GITHUB_SEARCH_URL, headers=HEADERS, params=params, timeout=15)
+                if resp.status_code == 401:
+                    color_print("  [!] Authentication failed. Check GITHUB_TOKEN.", Fore.RED)
+                    return []
                 if resp.status_code != 200:
-                    color_print(f"  [!] Search failed for '{query}': {resp.status_code}", Fore.RED)
-                    if resp.status_code == 401:
-                        color_print("      ❌ Authentication failed. Make sure GITHUB_TOKEN is set.", Fore.RED)
+                    color_print(f"  [!] Search failed '{query}': {resp.status_code}", Fore.RED)
                     break
                 data = resp.json()
                 items = data.get('items', [])
@@ -92,17 +87,16 @@ def search_github_sub_links():
                 page += 1
                 time.sleep(random.uniform(0.5, 1.0))
             except Exception as e:
-                color_print(f"  [!] Error searching '{query}': {e}", Fore.RED)
+                color_print(f"  [!] Error: {e}", Fore.RED)
                 break
     
-    color_print(f"[*] Raw links found (before filtering): {len(found_raw_links)}", Fore.YELLOW)
+    color_print(f"[*] Raw links found: {len(found_raw_links)}", Fore.YELLOW)
     return found_raw_links
 
 def check_repo_last_commit(repo_full_name):
     api_url = f"{GITHUB_REPO_URL}/{repo_full_name}"
-    headers = get_github_headers()
     try:
-        resp = requests.get(api_url, headers=headers, timeout=10)
+        resp = requests.get(api_url, headers=HEADERS, timeout=10)
         if resp.status_code == 200:
             data = resp.json()
             pushed_at = data.get('pushed_at')
@@ -115,11 +109,10 @@ def check_repo_last_commit(repo_full_name):
         return False, None
 
 def has_persian_or_iran(repo_full_name, file_path, raw_url):
-    headers = get_github_headers()
     # چک README
     readme_url = f"https://raw.githubusercontent.com/{repo_full_name}/HEAD/README.md"
     try:
-        resp = requests.get(readme_url, headers=headers, timeout=8)
+        resp = requests.get(readme_url, headers=HEADERS, timeout=8)
         if resp.status_code == 200:
             content = resp.text.lower()
             if re.search(r'[آ-ی]|iran|ایران|تهران|v2ray.*ایران|free.*iran', content):
@@ -128,7 +121,7 @@ def has_persian_or_iran(repo_full_name, file_path, raw_url):
         pass
     # چک خود فایل
     try:
-        resp = requests.get(raw_url, headers=headers, timeout=8)
+        resp = requests.get(raw_url, headers=HEADERS, timeout=8)
         if resp.status_code == 200:
             content = resp.text.lower()
             if re.search(r'[آ-ی]|iran|ایران|تهران|v2ray.*ایران|free.*iran', content):
@@ -138,14 +131,13 @@ def has_persian_or_iran(repo_full_name, file_path, raw_url):
     return False
 
 def validate_subscription_link(url):
-    headers = get_github_headers()
     try:
-        resp = requests.get(url, timeout=10, headers=headers)
+        resp = requests.get(url, timeout=10, headers=HEADERS)
         if resp.status_code == 200:
             text = resp.text.strip()
-            if len(text) > 50 and re.match(r'^[A-Za-z0-9+/=]+$', text[:100]):
-                return True
             if 'vmess://' in text or 'vless://' in text or 'trojan://' in text or 'ss://' in text:
+                return True
+            if len(text) > 50 and re.match(r'^[A-Za-z0-9+/=]+$', text[:200]):
                 return True
         return False
     except:
@@ -160,16 +152,19 @@ def main():
             existing_links = [line.strip() for line in f if line.strip()]
     
     raw_candidates = search_github_sub_links()
-    valid_links = []
+    if not raw_candidates:
+        color_print("[!] No candidates found. Keeping existing pool_address.txt", Fore.RED)
+        return
     
+    valid_links = []
     for idx, cand in enumerate(raw_candidates, 1):
         url = cand['url']
         repo = cand['repo']
         color_print(f"[{idx}/{len(raw_candidates)}] Checking: {repo}", Fore.CYAN)
         
-        is_recent, days = check_repo_last_commit(repo)
+        is_recent, _ = check_repo_last_commit(repo)
         if not is_recent:
-            color_print(f"    ❌ Last commit >15 days (or unknown)", Fore.RED)
+            color_print(f"    ❌ Last commit >15 days", Fore.RED)
             continue
         
         if not has_persian_or_iran(repo, cand['path'], url):
@@ -177,20 +172,19 @@ def main():
             continue
         
         if not validate_subscription_link(url):
-            color_print(f"    ❌ Link validation failed", Fore.RED)
+            color_print(f"    ❌ Validation failed", Fore.RED)
             continue
         
         valid_links.append(url)
-        color_print(f"    ✅ Valid subscription link found", Fore.GREEN)
+        color_print(f"    ✅ Valid link found", Fore.GREEN)
         time.sleep(random.uniform(0.3, 0.7))
     
     all_links = list(set(existing_links + valid_links))
-    
     with open("pool_address.txt", "w", encoding='utf-8') as f:
         for link in all_links:
             f.write(link + "\n")
     
-    color_print(f"\n[✓] Done! Total links after update: {len(all_links)}", Fore.GREEN)
+    color_print(f"\n[✓] Total links after update: {len(all_links)}", Fore.GREEN)
     color_print(f"    New links added: {len(valid_links)}", Fore.YELLOW)
 
 if __name__ == "__main__":
