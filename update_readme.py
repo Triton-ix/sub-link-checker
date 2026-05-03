@@ -1,16 +1,71 @@
-# 🚀 V2Ray Subscription Link Cleaner & Tester
+import os
+import json
+from datetime import datetime, timezone, timedelta
+import subprocess
+import sys
 
-🎉 به یک ابزار خودکار و قدرتمند برای دریافت، پاکسازی و تست لینک‌های اشتراک V2Ray خوش آمدید!
+# ------------------- تبدیل به تاریخ و زمان ایران (UTC+3:30) و شمسی -------------------
+def to_jalali(gregorian_dt):
+    # تبدیل datetime utc به ایران (UTC+3:30)
+    tehran_tz = timezone(timedelta(hours=3, minutes=30))
+    local = gregorian_dt.astimezone(tehran_tz)
+    # نصب کتابخانه jdatetime در صورتی که نباشد
+    try:
+        import jdatetime
+    except ImportError:
+        subprocess.run([sys.executable, '-m', 'pip', 'install', 'jdatetime'], capture_output=True)
+        import jdatetime
+    return jdatetime.datetime.fromgregorian(datetime=local).strftime("%Y/%m/%d %H:%M:%S")
 
-این پروژه سه کار اصلی را به طور خودکار برای شما انجام می‌دهد:
-1.  **جمع آوری لینک‌ها:** به طور خودکار لینک‌های جدید و معتبر اشتراک V2Ray مرتبط با ایران را از گیت‌هاب پیدا می‌کند.
-2.  **پاک سازی و یکتا سازی:** لینک‌ها را بررسی کرده و کانفیگ‌های تکراری را حذف می‌کند.
-3.  **تست و تأیید اعتبار:** کانفیگ‌های پاک شده را تست می‌کند و فقط کانفیگ‌های سالم و فعال را ذخیره می‌کند.
+def read_lines_count(fname):
+    if not os.path.exists(fname):
+        return 0
+    with open(fname, 'r', encoding='utf-8') as f:
+        return sum(1 for _ in f if _.strip())
 
-📊 **هر ۲۴ ساعت یکبار** لیست کانفیگ‌های تست شده و سالم به روز می‌شود و هر **۵ روز یکبار** لیست لینک‌های اشتراک از منابع جدید به روز می‌گردد.
+def get_link_stats():
+    if not os.path.exists("link_stats.json"):
+        return 0, 0, 0
+    with open("link_stats.json", 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    total = len(data)
+    working = sum(1 for v in data.values() if v.get("success"))
+    return total, working, total - working
 
----
+def get_raw_total():
+    if not os.path.exists("link_stats.json"):
+        return 0
+    with open("link_stats.json", 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    total = 0
+    for v in data.values():
+        if v.get("success"):
+            total += v.get("configs_found", 0)
+    return total
 
+def generate_readme():
+    # آمار لینک‌ها
+    total_links, working_links, dead_links = get_link_stats()
+    # آمار کانفیگ‌ها
+    raw_total = get_raw_total()
+    unique_total = read_lines_count("cleaned_configs.txt")
+    working_total = read_lines_count("success_config.txt")
+    duplicate_total = raw_total - unique_total if raw_total > unique_total else 0
+    dead_configs = unique_total - working_total if unique_total > working_total else 0
+
+    # درصدها
+    perc_links_working = (working_links / total_links * 100) if total_links else 0
+    perc_links_dead = (dead_links / total_links * 100) if total_links else 0
+    perc_unique = (unique_total / raw_total * 100) if raw_total else 0
+    perc_duplicate = 100 - perc_unique if raw_total else 0
+    perc_working = (working_total / unique_total * 100) if unique_total else 0
+    perc_dead = 100 - perc_working if unique_total else 0
+
+    # زمان بروزرسانی به شمسی و تهران
+    now_utc = datetime.now(timezone.utc)
+    jalali_str = to_jalali(now_utc)
+
+    table = f"""
 ## 🤖 تولید شده با **Vibe Coding** – نظارت انسانی + پیشنهادات هوش مصنوعی
 این کدها با کمک **GitHub Copilot** و بهینه‌سازی‌های هوش مصنوعی ساخته شده‌اند.
 
@@ -21,44 +76,36 @@
 
 ## 📊 گزارش خودکار وضعیت کانفیگ‌ها (به‌روزرسانی هر ۲۴ ساعت)
 
-**📅 آخرین بروزرسانی (زمان ایران):** [این بخش به صورت خودکار با زمان جاری پر می‌شود]
+**📅 آخرین بروزرسانی (زمان ایران):** {jalali_str}
 
-### 📈 آمار کلی
-
-| آیتم | 🔗 کل لینک‌های ساب‌اسکریپشن | ✅ لینک‌های دارای کانفیگ واقعی | ❌ لینک‌های خراب | 📥 کل کانفیگ‌های استخراج شده | 🗑️ تعداد کانفیگ‌های تکراری حذف شده | 🔄 کل کانفیگ‌های بدون تکرار | 🔴 کل کانفیگ‌های خراب | 🟢 کل کانفیگ‌های سالم و تست شده |
+| آیتم | 🔗 کل لینکهای ساب‌اسکریپشن | ✅ لینک‌های دارای کانفیگ واقعی | ❌ لینک‌های خراب | 📥 کل کانفیگ‌های استخراج شده | 🗑️ تعداد کانفیگ‌های تکراری حذف شده | 🔄 کل کانفیگ‌های بدون تکرار | 🔴 کل کانفیگ‌های خراب | 🟢 کل کانفیگ‌های سالم و تست شده |
 |------|----------------|------------------------|------------------|--------------------------|-----------------------------|-----------------------|---------------------|------------------------------|
-| **تعداد** | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] |
-| **درصد** | 100% | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | 100% | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] | [این بخش به صورت خودکار پر می‌شود] |
+| **تعداد** | {total_links} | {working_links} | {dead_links} | {raw_total} | {duplicate_total} | {unique_total} | {dead_configs} | {working_total} |
+| **درصد** | 100% | {perc_links_working:.1f}% | {perc_links_dead:.1f}% | 100% | {perc_duplicate:.1f}% | {perc_unique:.1f}% | {perc_dead:.1f}% | {perc_working:.1f}% |
 
 > درصد ستون **کانفیگ‌های بدون تکرار** و **سالم/خراب** نسبت به کل کانفیگ‌های بدون تکرار محاسبه شده است.
 
----
-
-## 📁 فایل‌های خروجی مهم
-
-*   **`success_config.txt`** : 🟢 **لیست نهایی و آماده به استفاده از کانفیگ‌های تست شده و سالم.** (فقط کافیست از لینک پایین استفاده کنید)
-*   `cleaned_configs.txt` : لیست کانفیگ‌های یکتا (بدون تکرار) پیش از تست.
-*   `pool_address.txt` : لیست لینک‌های اشتراک خام که هر ۵ روز به روز می‌شود.
-*   `link_stats.json` : فایل کمکی حاوی جزئیات وضعیت هر لینک اشتراک.
-
----
-
-## 🪄 فقط کافیست یک کلیک کنید!
-
-برای استفاده از لیست به روز و تست شده کانفیگ‌های سالم، **وارد لینک زیر شوید**:
-
-### ✨ **لینک اشتراک نهایی و همیشه به روز:**  
-👉 **[برای دریافت `success_config.txt` کلیک کنید](https://github.com/farzanfarhangi/sub-link-checker/blob/main/success_config.txt)** 👈
-
-**نحوه استفاده:** فقط کافیست این لینک را در نرم‌افزارهای مدیریت اشتراک V2Ray مانند `v2rayN` یا `Nekobox` وارد کنید. نرم‌افزار شما به طور خودکار لیست کانفیگ‌های سالم را دانلود و اعمال می‌کند.
-
-> **توجه:** لطفاً دقت کنید که فایل `success_config.txt` حاوی لینک‌هایی است که تست شده و سالم هستند. این فایل هر ۲۴ ساعت یکبار به صورت خودکار به روزرسانی می‌شود.
-
----
-
-## 🧪 روش تست و اعتبار‌سنجی
+### 🧪 روش تست
 - هر کانفیگ با ارسال درخواست HTTP به آدرس `host:port` در کمتر از ۱ ثانیه تست می‌شود.
 - همزمانی: ۱۰ رشته – ذخیره نتایج هر ۷۰۰۰ کانفیگ در مخزن.
 - لینک‌های اشتراک هر ۵ روز یکبار به‌روز می‌شوند (اکشن جداگانه).
 
+### 📁 فایل‌های خروجی
+- `cleaned_configs.txt` : کانفیگ‌های یکتا
+- `success_config.txt` : کانفیگ‌های سالم (تدریجی append)
+- `link_stats.json` : وضعیت هر لینک اشتراک
+
 > این ریپازیتوری توسط **Vibe Coding** با هدایت انسان و کمک هوش مصنوعی مدیریت می‌شود.
+"""
+    with open("README.md", "w", encoding='utf-8') as f:
+        f.write(table)
+    print("README.md updated with Persian date and new table.")
+
+if __name__ == "__main__":
+    # نصب jdatetime در صورتی که نباشد
+    try:
+        import jdatetime
+    except ImportError:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'jdatetime'])
+        import jdatetime
+    generate_readme()
