@@ -1,46 +1,48 @@
-name: V2Ray Link Cleaner & Tester
+name: V2Ray Subscription Updater
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    # هر ۵ روز یکبار ساعت 00:00 UTC اجرا شود (این زمان هماهنگ با جمع‌آوری لینک‌هاست)
+    # 1 1 */5 * *
+    - cron: '1 1 */5 * *'
+  workflow_dispatch:  # قابلیت اجرای دستی
 
 jobs:
-  run-checker:
+  run-collector:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: دریافت کد از مخزن
+      - name: 📥 دریافت کد از مخزن
         uses: actions/checkout@v4
 
-      - name: نصب پایتون
+      - name: 🐍 نصب پایتون
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: نصب کتابخانه‌های مورد نیاز
+      - name: 📦 نصب کتابخانه‌های مورد نیاز
         run: |
           python -m pip install --upgrade pip
-          pip install requests colorama urllib3
+          pip install requests
 
-      - name: مرحله ۱ - استخراج و پاکسازی کانفیگ‌ها
+      - name: 🕸️ جمع‌آوری خودکار و هوشمند لینک‌های سابسکریپشن
+        run: python collect_subscriptions.py
+
+      - name: 🚀 مرحله ۱ - استخراج و پاکسازی کانفیگ‌ها
         run: python sub_link_checker.py
 
-      - name: مرحله ۲ - تست واقعی کانفیگ‌ها (با commit خودکار)
+      - name: 🚀 مرحله ۲ - تست واقعی کانفیگ‌ها (بسته‌بندی شده)
         run: python success_config.py
 
-      - name: مرحله ۳ - تولید نهایی README.md (اختیاری)
+      - name: 📊 مرحله ۳ - تولید گزارش README.md
         run: python update_readme.py
 
-      - name: ذخیره نهایی همه فایل‌ها
+      - name: 💾 ذخیره خودکار همه فایل‌ها در مخزن
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add cleaned_configs.txt success_config.txt link_stats.json README.md
-          git diff --staged --quiet || git commit -m "Final update - $(date '+%Y-%m-%d %H:%M:%S')"
+          git add pool_address.txt cleaned_configs.txt success_config.txt link_stats.json README.md
+          git diff --staged --quiet || git commit -m "Auto-update all resources - $(date '+%Y-%m-%d %H:%M:%S')"
           git push
