@@ -6,7 +6,7 @@ import time
 import random
 import signal
 import warnings
-from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import init, Fore, Style
 
 warnings.filterwarnings('ignore')
@@ -42,7 +42,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
-def test_single_config(config_line, timeout=3):
+def test_single_config(config_line, timeout=2):
     if stop_testing:
         return config_line, False
     try:
@@ -59,32 +59,30 @@ def test_single_config(config_line, timeout=3):
         elif config_line.startswith('vmess://'):
             import base64
             encoded = config_line.replace('vmess://', '')
-            # استفاده از try/except برای هندل کردن خطا در دیکد کردن base64
             try:
                 decoded = base64.b64decode(encoded).decode('utf-8')
                 config = json.loads(decoded)
                 host = config.get('add')
                 port = str(config.get('port'))
-            except Exception:
+            except:
                 return config_line, False
         elif config_line.startswith('trojan://') or config_line.startswith('ss://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
             host = parsed.hostname
             port = parsed.port
-
         if host and port:
             test_url = f"http://{host}:{port}/"
-            # استفاده از Session برای بهبود کارایی
             with requests.Session() as session:
                 session.headers.update(HEADERS)
                 session.verify = False
                 resp = session.get(test_url, timeout=timeout)
                 if resp.status_code < 500:
-                    time.sleep(random.uniform(0.05, 0.2))
+                    # تأخیر بسیار کم، فقط برای طبیعی جلوه دادن
+                    time.sleep(random.uniform(0, 0.05))
                     return config_line, True
         return config_line, False
-    except Exception:
+    except:
         return config_line, False
 
 def read_configs(filename):
@@ -101,7 +99,7 @@ def append_working_config(config, output_file):
 
 def main():
     color_print("=" * 60, Fore.CYAN)
-    color_print("V2RAY CONFIGURATION TESTER (STABLE BATCH VERSION)", Fore.YELLOW, Style.BRIGHT)
+    color_print("V2RAY CONFIGURATION TESTER (FAST & SAFE)", Fore.YELLOW, Style.BRIGHT)
     color_print("=" * 60, Fore.CYAN)
 
     input_file = 'cleaned_configs.txt'
@@ -118,10 +116,10 @@ def main():
     total = len(configs)
     color_print(f"[*] Total unique configs to test: {total}", Fore.GREEN)
     
-    # پارامترهای جدید برای عملکرد پایدارتر
-    BATCH_SIZE = 100           # سایز هر دسته کاهش یافت
-    MAX_WORKERS = 2            # تعداد کارگرها کاهش یافت
-    TASK_TIMEOUT = 18          # زمان انتظار برای هر تسک (ثانیه)
+    # تنظیمات متعادل: سریع اما ایمن
+    BATCH_SIZE = 500
+    MAX_WORKERS = 5            # افزایش از 2 به 5
+    TASK_TIMEOUT = 8           # زمان انتظار برای هر تسک
     
     working_total = 0
     processed = 0
@@ -134,53 +132,35 @@ def main():
         batch_configs = configs[start:end]
         batch_working = 0
         
-        color_print(f"\n[Batch {batch_num}] Testing configs {start+1} to {end} ({len(batch_configs)} items)...", Fore.CYAN)
+        color_print(f"\n[Batch {batch_num}] Testing {start+1}-{end} ({len(batch_configs)} items) with {MAX_WORKERS} workers...", Fore.CYAN)
         
-        # لیستی برای نگهداری Future objectها
-        futures = []
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            # ارسال همه تسک‌های این دسته به executor
-            for cfg in batch_configs:
-                future = executor.submit(test_single_config, cfg, TASK_TIMEOUT)
-                futures.append(future)
-            
-            # حلقه تا زمانی که همه تسک‌ها کامل شوند
-            while futures and not stop_testing:
-                # منتظر بمان تا حداقل یک تسک کامل شود و 5 ثانیه بیشتر منتظر نمان
-                done, futures_not_done = wait(futures, timeout=5, return_when=FIRST_COMPLETED)
+            future_to_config = {executor.submit(test_single_config, cfg, TASK_TIMEOUT): cfg for cfg in batch_configs}
+            for future in as_completed(future_to_config):
+                if stop_testing:
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    break
+                try:
+                    cfg, is_working = future.result(timeout=TASK_TIMEOUT)
+                except Exception:
+                    cfg = future_to_config[future]
+                    is_working = False
                 
-                if not done:
-                    # اگر هیچ تسکی در 5 ثانیه کامل نشد، ادامه بده (از وقفه جلوگیری می‌کند)
-                    continue
+                processed += 1
+                if is_working:
+                    working_total += 1
+                    batch_working += 1
+                    append_working_config(cfg, output_file)
                 
-                # پردازش تسک‌های تکمیل شده
-                for future in done:
-                    try:
-                        # دریافت نتیجه تسک (حداکثر 1 ثانیه صبر کن)
-                        cfg, is_working = future.result(timeout=1)
-                    except Exception:
-                        # اگر تسک با خطا مواجه شد، آن را ناسالم در نظر بگیر
-                        cfg = None  # شناسایی کانفیگ ممکن نیست
-                        is_working = False
-                    
-                    processed += 1
-                    if is_working:
-                        working_total += 1
-                        batch_working += 1
-                        if cfg:
-                            append_working_config(cfg, output_file)
-                    
-                    # نمایش پیشرفت
+                # نمایش پیشرفت (هر 100 تا یکبار به روزرسانی برای کاهش مصرف)
+                if processed % 100 == 0 or processed == total:
                     percent = (working_total / processed * 100) if processed > 0 else 0
                     status = "✓" if is_working else "✗"
                     color = Fore.GREEN if is_working else Fore.RED
                     print(f"\r[{processed}/{total} ({percent:.1f}%)] Working: {working_total}  {color}{status}{Style.RESET_ALL}", end='', flush=True)
-                
-                # به‌روزرسانی لیست futures با تسک‌های باقیمانده
-                futures = futures_not_done
         
-        # پس از پایان هر بسته، وضعیت آن را نشان بده
-        color_print(f"\n[Batch {batch_num}] Completed. Working in this batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
+        # نمایش نتیجه بسته
+        color_print(f"\n[Batch {batch_num}] Working: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
         batch_num += 1
     
     print()
