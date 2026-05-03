@@ -5,8 +5,8 @@ import json
 import time
 import random
 import signal
-import warnings  # <-- این خط را حتماً اضافه کنید
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import warnings
+from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait
 from colorama import init, Fore, Style
 
 warnings.filterwarnings('ignore')
@@ -59,17 +59,23 @@ def test_single_config(config_line, timeout=3):
         elif config_line.startswith('vmess://'):
             import base64
             encoded = config_line.replace('vmess://', '')
-            decoded = base64.b64decode(encoded).decode('utf-8')
-            config = json.loads(decoded)
-            host = config.get('add')
-            port = str(config.get('port'))
+            # استفاده از try/except برای هندل کردن خطا در دیکد کردن base64
+            try:
+                decoded = base64.b64decode(encoded).decode('utf-8')
+                config = json.loads(decoded)
+                host = config.get('add')
+                port = str(config.get('port'))
+            except Exception:
+                return config_line, False
         elif config_line.startswith('trojan://') or config_line.startswith('ss://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
             host = parsed.hostname
             port = parsed.port
+
         if host and port:
             test_url = f"http://{host}:{port}/"
+            # استفاده از Session برای بهبود کارایی
             with requests.Session() as session:
                 session.headers.update(HEADERS)
                 session.verify = False
@@ -95,7 +101,7 @@ def append_working_config(config, output_file):
 
 def main():
     color_print("=" * 60, Fore.CYAN)
-    color_print("V2RAY CONFIGURATION TESTER (BATCH PROCESSING)", Fore.YELLOW, Style.BRIGHT)
+    color_print("V2RAY CONFIGURATION TESTER (STABLE BATCH VERSION)", Fore.YELLOW, Style.BRIGHT)
     color_print("=" * 60, Fore.CYAN)
 
     input_file = 'cleaned_configs.txt'
@@ -112,9 +118,10 @@ def main():
     total = len(configs)
     color_print(f"[*] Total unique configs to test: {total}", Fore.GREEN)
     
-    BATCH_SIZE = 500
-    MAX_WORKERS = 3
-    WORKER_TIMEOUT = 5
+    # پارامترهای جدید برای عملکرد پایدارتر
+    BATCH_SIZE = 100           # سایز هر دسته کاهش یافت
+    MAX_WORKERS = 2            # تعداد کارگرها کاهش یافت
+    TASK_TIMEOUT = 18          # زمان انتظار برای هر تسک (ثانیه)
     
     working_total = 0
     processed = 0
@@ -129,29 +136,50 @@ def main():
         
         color_print(f"\n[Batch {batch_num}] Testing configs {start+1} to {end} ({len(batch_configs)} items)...", Fore.CYAN)
         
+        # لیستی برای نگهداری Future objectها
+        futures = []
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            future_to_config = {executor.submit(test_single_config, cfg): cfg for cfg in batch_configs}
-            for future in as_completed(future_to_config, timeout=WORKER_TIMEOUT):
-                if stop_testing:
-                    executor.shutdown(wait=False, cancel_futures=True)
-                    break
-                try:
-                    cfg, is_working = future.result(timeout=WORKER_TIMEOUT)
-                except Exception:
-                    cfg = future_to_config[future]
-                    is_working = False
+            # ارسال همه تسک‌های این دسته به executor
+            for cfg in batch_configs:
+                future = executor.submit(test_single_config, cfg, TASK_TIMEOUT)
+                futures.append(future)
+            
+            # حلقه تا زمانی که همه تسک‌ها کامل شوند
+            while futures and not stop_testing:
+                # منتظر بمان تا حداقل یک تسک کامل شود و 5 ثانیه بیشتر منتظر نمان
+                done, futures_not_done = wait(futures, timeout=5, return_when=FIRST_COMPLETED)
                 
-                processed += 1
-                if is_working:
-                    working_total += 1
-                    batch_working += 1
-                    append_working_config(cfg, output_file)
+                if not done:
+                    # اگر هیچ تسکی در 5 ثانیه کامل نشد، ادامه بده (از وقفه جلوگیری می‌کند)
+                    continue
                 
-                percent = (working_total / processed * 100) if processed > 0 else 0
-                status = "✓" if is_working else "✗"
-                color = Fore.GREEN if is_working else Fore.RED
-                print(f"\r[{processed}/{total} ({percent:.1f}%)] Working: {working_total}  {color}{status}{Style.RESET_ALL}", end='', flush=True)
+                # پردازش تسک‌های تکمیل شده
+                for future in done:
+                    try:
+                        # دریافت نتیجه تسک (حداکثر 1 ثانیه صبر کن)
+                        cfg, is_working = future.result(timeout=1)
+                    except Exception:
+                        # اگر تسک با خطا مواجه شد، آن را ناسالم در نظر بگیر
+                        cfg = None  # شناسایی کانفیگ ممکن نیست
+                        is_working = False
+                    
+                    processed += 1
+                    if is_working:
+                        working_total += 1
+                        batch_working += 1
+                        if cfg:
+                            append_working_config(cfg, output_file)
+                    
+                    # نمایش پیشرفت
+                    percent = (working_total / processed * 100) if processed > 0 else 0
+                    status = "✓" if is_working else "✗"
+                    color = Fore.GREEN if is_working else Fore.RED
+                    print(f"\r[{processed}/{total} ({percent:.1f}%)] Working: {working_total}  {color}{status}{Style.RESET_ALL}", end='', flush=True)
+                
+                # به‌روزرسانی لیست futures با تسک‌های باقیمانده
+                futures = futures_not_done
         
+        # پس از پایان هر بسته، وضعیت آن را نشان بده
         color_print(f"\n[Batch {batch_num}] Completed. Working in this batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
         batch_num += 1
     
