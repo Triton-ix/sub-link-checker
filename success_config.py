@@ -43,13 +43,11 @@ def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
 def test_single_config(config_line, timeout=1):
-    """تست یک کانفیگ با حداکثر ۱ ثانیه زمان - کاملاً مشابه کد اصلی"""
     if stop_testing:
         return config_line, False
     try:
         if not config_line.strip():
             return config_line, False
-        # تشخیص پروتکل
         if config_line.startswith('vless://'):
             from urllib.parse import urlparse
             parsed = urlparse(config_line)
@@ -100,9 +98,28 @@ def append_working_config(config, output_file):
     with open(output_file, 'a', encoding='utf-8') as f:
         f.write(config + '\n')
 
+def git_commit_and_push():
+    """انجام commit و push همه فایل‌های مربوطه"""
+    try:
+        # افزودن فایل‌ها به staging
+        subprocess.run(["git", "add", "cleaned_configs.txt", "success_config.txt", "link_stats.json", "README.md"], check=True, capture_output=True)
+        # بررسی تغییرات
+        result = subprocess.run(["git", "diff", "--staged", "--quiet"], capture_output=True)
+        if result.returncode != 0:  # تغییر وجود دارد
+            # commit
+            commit_msg = f"Auto-update after batch - {time.strftime('%Y-%m-%d %H:%M:%S')}"
+            subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
+            # push
+            subprocess.run(["git", "push"], check=True, capture_output=True)
+            color_print("[✓] Changes committed and pushed to GitHub.", Fore.GREEN)
+        else:
+            color_print("[*] No changes to commit.", Fore.CYAN)
+    except subprocess.CalledProcessError as e:
+        color_print(f"[!] Git operation failed: {e}", Fore.RED)
+
 def main():
     color_print("=" * 60, Fore.CYAN)
-    color_print("V2RAY CONFIGURATION TESTER (FAST BATCH)", Fore.YELLOW, Style.BRIGHT)
+    color_print("V2RAY CONFIGURATION TESTER (FAST BATCH WITH AUTO-COMMIT)", Fore.YELLOW, Style.BRIGHT)
     color_print("=" * 60, Fore.CYAN)
 
     input_file = 'cleaned_configs.txt'
@@ -121,7 +138,7 @@ def main():
     
     BATCH_SIZE = 7000
     MAX_WORKERS = 10
-    WORKER_TIMEOUT = 1  # هر تست حداکثر 1 ثانیه
+    WORKER_TIMEOUT = 1
     
     working_total = 0
     processed = 0
@@ -145,7 +162,6 @@ def main():
                 try:
                     cfg, is_working = future.result(timeout=WORKER_TIMEOUT+0.5)
                 except Exception:
-                    # اگر future به هر دلیلی موفق نبود، آن کانفیگ را ناسالم در نظر بگیر
                     cfg = future_to_config[future]
                     is_working = False
                 
@@ -155,7 +171,6 @@ def main():
                     batch_working += 1
                     append_working_config(cfg, output_file)
                 
-                # نمایش پیشرفت
                 percent = (working_total / processed * 100) if processed > 0 else 0
                 status = "✓" if is_working else "✗"
                 color = Fore.GREEN if is_working else Fore.RED
@@ -163,6 +178,13 @@ def main():
         
         color_print(f"\n[Batch {batch_num}] Completed. Working in this batch: {batch_working}/{len(batch_configs)}", Fore.MAGENTA)
         batch_num += 1
+        
+        # به‌روزرسانی README.md و commit & push
+        color_print("[*] Updating README.md and committing changes...", Fore.CYAN)
+        # اجرای اسکریپت به‌روزرسانی README
+        subprocess.run([sys.executable, "update_readme.py"], check=False)
+        # commit و push
+        git_commit_and_push()
         
         # استراحت کوتاه بین بسته‌ها برای جلوگیری از بلاک شدن IP
         if end < total:
@@ -183,6 +205,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         color_print("\n[!] Interrupted. Already saved working configs.", Fore.YELLOW)
+        git_commit_and_push()  # یک بار دیگر در صورت قطع شدن، commit کند
     except Exception as e:
         color_print(f"\n[ERROR] {e}", Fore.RED)
         sys.exit(1)
