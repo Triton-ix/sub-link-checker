@@ -88,7 +88,7 @@ class V2RaySubscriptionFinder:
         if not date_obj:
             return False
         now = datetime.now(date_obj.tzinfo) if date_obj.tzinfo else datetime.now()
-        return (now - date_obj) <= timedelta(days=15)
+        return (now - date_obj) <= timedelta(days=5)
 
     def search_github_repos(self, max_pages=5):
         repos = []
