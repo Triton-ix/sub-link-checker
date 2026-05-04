@@ -17,7 +17,7 @@ class V2RaySubscriptionFinder:
         self.subscription_links = set()
         self.seen_repos = set()
         
-        self.iran_keywords = ['iran', 'ایران', 'ir', 'persia', 'فارسی', 'farsi']
+        self.iran_keywords = ['iran', 'ایران', 'ir', 'persia', 'persian', 'فارسی', 'farsi']
         
         self.sub_patterns = [
             r'(https?://raw\.githubusercontent\.com/[^\s"\'<>]+\.(txt|json|yml|yaml|link))',
