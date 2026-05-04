@@ -38,7 +38,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def color_print(text, color=Fore.WHITE, style=Style.NORMAL):
     print(f"{style}{color}{text}{Style.RESET_ALL}")
 
-def test_single_config(line, timeout=1):
+def test_single_config(line, timeout=0.3):   # <-- تغییر زمان از 1 به 0.3 ثانیه (300 میلی‌ثانیه)
     if stop_testing or not line.strip():
         return line, False
     try:
@@ -70,7 +70,7 @@ def test_single_config(line, timeout=1):
             with requests.Session() as sess:
                 sess.headers.update(HEADERS)
                 sess.verify = False
-                r = sess.get(url, timeout=timeout)
+                r = sess.get(url, timeout=timeout)   # زمان timeout اعمال می‌شود
                 if r.status_code < 500:
                     time.sleep(random.uniform(0.05, 0.2))
                     return line, True
@@ -129,7 +129,8 @@ def main():
 
     BATCH = 7000
     WORKERS = 10
-    TIMEOUT = 1
+    WORKER_TIMEOUT = 0.5   # زمان انتظار برای future (باید کمی بیشتر از timeout اصلی باشد)
+    # توجه: timeout تست 0.3 ثانیه است، future می‌تواند 0.5 ثانیه صبر کند
 
     working_total = 0
     processed = 0
@@ -144,13 +145,13 @@ def main():
         color_print(f"\n[Batch {batch_num}] Testing {start+1}-{end} ({len(batch_configs)} items)...", Fore.CYAN)
 
         with ThreadPoolExecutor(max_workers=WORKERS) as ex:
-            futures = {ex.submit(test_single_config, cfg, TIMEOUT): cfg for cfg in batch_configs}
+            futures = {ex.submit(test_single_config, cfg, 0.3): cfg for cfg in batch_configs}
             for fut in as_completed(futures):
                 if stop_testing:
                     ex.shutdown(wait=False)
                     break
                 try:
-                    cfg, ok = fut.result(timeout=TIMEOUT+0.5)
+                    cfg, ok = fut.result(timeout=WORKER_TIMEOUT)
                 except:
                     cfg = futures[fut]
                     ok = False
