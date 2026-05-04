@@ -17,7 +17,7 @@ class V2RaySubscriptionFinder:
         self.subscription_links = set()
         self.seen_repos = set()
         
-        self.iran_keywords = ['iran', 'ایران', 'ir', 'persia', 'فارس', 'tehran', 'تهران', 'islamic republic', 'khuzestan', 'farsi']
+        self.iran_keywords = ['iran', 'ایران', 'ir', 'persia', 'فارسی', 'farsi']
         
         self.sub_patterns = [
             r'(https?://raw\.githubusercontent\.com/[^\s"\'<>]+\.(txt|json|yml|yaml|link))',
@@ -32,6 +32,7 @@ class V2RaySubscriptionFinder:
             r'config.*[\'"]?(https?://raw\.githubusercontent\.com[^\s\'"]+)[\'"]?',
         ]
 
+    # ---------- Date parsing utilities (robust day/month/year detection) ----------
     def _parse_relative_date(self, text):
         text = text.lower()
         now = datetime.now()
@@ -84,11 +85,12 @@ class V2RaySubscriptionFinder:
             return rel
         return self._parse_absolute_date(date_string)
 
-    def is_within_15_days(self, date_obj):
+    def is_within_5_days(self, date_obj):
+        """Check if given datetime is within last 5 days"""
         if not date_obj:
             return False
         now = datetime.now(date_obj.tzinfo) if date_obj.tzinfo else datetime.now()
-        return (now - date_obj) <= timedelta(days=5)
+        return (now - date_obj) <= timedelta(days=5)   # <-- تغییر از 15 به 5
 
     def search_github_repos(self, max_pages=5):
         repos = []
@@ -254,7 +256,7 @@ class V2RaySubscriptionFinder:
                 last_date = self._get_last_update_from_page(soup)
             if not last_date:
                 last_date = self.parse_date(repo_info.get('updated_at', ''))
-            if not last_date or not self.is_within_15_days(last_date):
+            if not last_date or not self.is_within_5_days(last_date):   # <-- تغییر معیار به 5 روز
                 return False
             links = self._extract_links_from_repo(repo_url)
             links.update(self._scan_repo_contents(repo_url))
@@ -267,7 +269,7 @@ class V2RaySubscriptionFinder:
         return False
 
     def find_valid_subscriptions(self):
-        print("Searching GitHub for Iran-related V2Ray subscription repos...")
+        print("Searching GitHub for Iran-related V2Ray subscription repos (last 5 days)...")
         repos = self.search_github_repos(max_pages=5)
         print(f"Found {len(repos)} candidate repositories. Checking...")
         with ThreadPoolExecutor(max_workers=5) as ex:
