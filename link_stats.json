@@ -1,93 +1,197 @@
 {
-  "https://raw.githubusercontent.com/ALIILAPRO/v2rayNG-Config/main/sub.txt": {
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/vm.txt": {
     "success": true,
-    "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/tuic.json": {
-    "success": true,
-    "configs_found": 142
-  },
-  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/ss.json": {
-    "success": true,
-    "configs_found": 1847
-  },
-  "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/vless_configs.txt": {
-    "success": true,
-    "configs_found": 18903
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vmess_sub.txt": {
-    "success": true,
-    "configs_found": 1
+    "configs_found": 92300
   },
   "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-31.txt": {
     "success": true,
     "configs_found": 10000
   },
-  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/vmess.txt": {
+  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/all.yaml": {
     "success": true,
-    "configs_found": 143
+    "configs_found": 1347
   },
-  "https://raw.githubusercontent.com/firefoxmmx2/v2rayshare_subcription/main/subscription/mihomo_sub.yaml": {
+  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/shadowsocks.txt": {
     "success": true,
-    "configs_found": 491
+    "configs_found": 2169
   },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-27.txt": {
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub7.txt": {
     "success": true,
-    "configs_found": 10000
+    "configs_found": 387
   },
-  "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml": {
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_spr.yaml": {
     "success": true,
-    "configs_found": 251
+    "configs_found": 1644
   },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-week.txt": {
+  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/reality.json": {
     "success": true,
-    "configs_found": 1217
+    "configs_found": 142
   },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox_rs.json": {
+  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/trojan.txt": {
     "success": true,
-    "configs_found": 4342
+    "configs_found": 16
   },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/All_Configs_base64_Sub.txt": {
+  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/vmess.txt": {
     "success": true,
     "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt": {
-    "success": true,
-    "configs_found": 506
-  },
-  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/kooker.jp.txt": {
-    "success": true,
-    "configs_found": 197
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-24.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/sub_all.txt": {
-    "success": true,
-    "configs_found": 1368
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-DE.txt": {
-    "success": true,
-    "configs_found": 750
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vmess.txt": {
-    "success": true,
-    "configs_found": 1048
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/All_Configs_Sub.txt": {
-    "success": true,
-    "configs_found": 3427
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-4.txt": {
-    "success": true,
-    "configs_found": 10000
   },
   "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/all.txt": {
     "success": true,
     "configs_found": 1
   },
-  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/shadowsocks.txt": {
+  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/subscriptions/mix-base64.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/vless_iran.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/trojan.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/firefoxmmx2/v2rayshare_subcription/main/subscription/vray_sub.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-22.txt": {
+    "success": true,
+    "configs_found": 4835
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-30.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/ssr.txt": {
+    "success": true,
+    "configs_found": 6
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub2.txt": {
+    "success": true,
+    "configs_found": 505
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-6.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/vless.txt": {
+    "success": true,
+    "configs_found": 4586
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-FR.txt": {
+    "success": true,
+    "configs_found": 262
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/vless.txt": {
+    "success": true,
+    "configs_found": 2594
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config_jo.txt": {
+    "success": true,
+    "configs_found": 47
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-35.txt": {
+    "success": true,
+    "configs_found": 5047
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config_no_cf.txt": {
+    "success": true,
+    "configs_found": 44
+  },
+  "https://raw.githubusercontent.com/Rasoolesp/rasoolesp-sub/main/My-sub.txt": {
+    "success": true,
+    "configs_found": 16
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vmess.txt": {
+    "success": true,
+    "configs_found": 1056
+  },
+  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/Best-Results/proxies.txt": {
+    "success": true,
+    "configs_found": 1701
+  },
+  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/tuic.json": {
+    "success": true,
+    "configs_found": 142
+  },
+  "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml": {
+    "success": true,
+    "configs_found": 251
+  },
+  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/light.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/trojan.json": {
+    "success": true,
+    "configs_found": 1985
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/ss.txt": {
+    "success": true,
+    "configs_found": 564
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-26.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/ss.txt": {
+    "success": true,
+    "configs_found": 411
+  },
+  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/mix.txt": {
+    "success": true,
+    "configs_found": 401
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-5.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/wenxig/free-nodes-sub/refs/heads/main/data/sub.txt": {
+    "success": true,
+    "configs_found": 133
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-29.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config_jo.json": {
+    "success": true,
+    "configs_found": 957
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-NL.txt": {
+    "success": true,
+    "configs_found": 258
+  },
+  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/vless.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox_prx7991.json": {
+    "success": true,
+    "configs_found": 4401
+  },
+  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/shadowsocks.txt": {
+    "success": true,
+    "configs_found": 28
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-21.txt": {
+    "success": true,
+    "configs_found": 6371
+  },
+  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/vless.json": {
+    "success": true,
+    "configs_found": 8091
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub4.txt": {
+    "success": true,
+    "configs_found": 505
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vmess_sub.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/ALIILAPRO/v2rayNG-Config/main/sub.txt": {
     "success": true,
     "configs_found": 1
   },
@@ -95,451 +199,103 @@
     "success": true,
     "configs_found": 10000
   },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-30.txt": {
+  "https://raw.githubusercontent.com/nyeinkokoaung404/V2ray-Configs/main/All_Configs_Sub.txt": {
     "success": true,
-    "configs_found": 10000
+    "configs_found": 1241
   },
-  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt": {
-    "success": true,
-    "configs_found": 5193
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-28.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/shadowsocks.txt": {
-    "success": true,
-    "configs_found": 2130
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-11.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/Awmiroosen/awmirx-v2ray/refs/heads/main/blob/main/v2-sub.txt": {
-    "success": true,
-    "configs_found": 142
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-12.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-2.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-29.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-9.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/trojan_sub.txt": {
+  "https://raw.githubusercontent.com/snakem982/proxypool/main/source/v2ray-2.txt": {
     "success": true,
     "configs_found": 1
   },
-  "https://raw.githubusercontent.com/wenxig/free-nodes-sub/refs/heads/main/data/sub.txt": {
+  "https://raw.githubusercontent.com/firefoxmmx2/v2rayshare_subcription/main/subscription/mihomo_sub.yaml": {
     "success": true,
-    "configs_found": 144
+    "configs_found": 491
   },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-7.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-13.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/vmess.txt": {
-    "success": true,
-    "configs_found": 25
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/vm.txt": {
-    "success": true,
-    "configs_found": 92110
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-34.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_spr.yaml": {
-    "success": true,
-    "configs_found": 1644
-  },
-  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/vless.txt": {
-    "success": true,
-    "configs_found": 331
-  },
-  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/subscriptions/mix-base64.txt": {
+  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/base64.txt": {
     "success": true,
     "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-19.txt": {
-    "success": true,
-    "configs_found": 1193
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-10.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/hans-thomas/v2ray-subscription/refs/heads/master/servers.txt": {
-    "success": true,
-    "configs_found": 102
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-UK.txt": {
-    "success": true,
-    "configs_found": 144
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_f2.yaml": {
-    "success": true,
-    "configs_found": 1512
-  },
-  "https://raw.githubusercontent.com/Rasoolesp/rasoolesp-sub/refs/heads/main/default.yaml.txt": {
-    "success": true,
-    "configs_found": 877
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/mix.txt": {
-    "success": true,
-    "configs_found": 2082
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub3.txt": {
-    "success": true,
-    "configs_found": 505
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-3.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-22.txt": {
-    "success": true,
-    "configs_found": 4835
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-25.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/trojan.txt": {
-    "success": true,
-    "configs_found": 315
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub7.txt": {
-    "success": true,
-    "configs_found": 431
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox.json": {
-    "success": true,
-    "configs_found": 4418
-  },
-  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/reality.json": {
-    "success": true,
-    "configs_found": 142
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/mix_sub.txt": {
-    "success": true,
-    "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_l2.yaml": {
-    "success": true,
-    "configs_found": 1512
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-15.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/trojan_iran.txt": {
-    "success": true,
-    "configs_found": 0
-  },
-  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/mix.txt": {
-    "success": true,
-    "configs_found": 406
-  },
-  "https://raw.githubusercontent.com/Rasoolesp/rasoolesp-sub/main/My-sub.txt": {
-    "success": true,
-    "configs_found": 16
-  },
-  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/vless_iran.txt": {
-    "success": true,
-    "configs_found": 0
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-8.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/firefoxmmx2/v2rayshare_subcription/main/subscription/vray_sub.txt": {
-    "success": true,
-    "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-17.txt": {
-    "success": true,
-    "configs_found": 4817
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config_no_cf.txt": {
-    "success": true,
-    "configs_found": 53
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-26.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/marshall888666/free_clash_subscribe/main/source/clash-meta-2.yaml": {
-    "success": true,
-    "configs_found": 10249
-  },
-  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/vless.txt": {
-    "success": true,
-    "configs_found": 1186
-  },
-  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/trojan.txt": {
-    "success": true,
-    "configs_found": 16
-  },
-  "https://raw.githubusercontent.com/twj0/subseek/refs/heads/master/data/sub_platform.txt": {
-    "success": true,
-    "configs_found": 0
-  },
-  "https://raw.githubusercontent.com/morteza-v2/free-v2ray-irancell-config/refs/heads/main/Sub1.txt": {
-    "success": true,
-    "configs_found": 66
-  },
-  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/vmess.txt": {
-    "success": true,
-    "configs_found": 1735
-  },
-  "https://raw.githubusercontent.com/miraali1372/mirsub/main/subscription.txt": {
-    "success": true,
-    "configs_found": 1499
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-32.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/vmess.txt": {
-    "success": true,
-    "configs_found": 154
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-FR.txt": {
-    "success": true,
-    "configs_found": 262
-  },
-  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/vless.txt": {
-    "success": true,
-    "configs_found": 4655
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/trojan.txt": {
-    "success": true,
-    "configs_found": 186
-  },
-  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/vmess.txt": {
-    "success": true,
-    "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config_jo.json": {
-    "success": true,
-    "configs_found": 985
-  },
-  "https://raw.githubusercontent.com/snakem982/proxypool/main/source/clash-meta-2.yaml": {
-    "success": true,
-    "configs_found": 10249
-  },
-  "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Vless-Reality-White-Lists-Rus-Mobile.txt": {
-    "success": true,
-    "configs_found": 156
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/tr.txt": {
-    "success": true,
-    "configs_found": 12837
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-5.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/all.yaml": {
-    "success": true,
-    "configs_found": 2040
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_f.yaml": {
-    "success": true,
-    "configs_found": 1584
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-21.txt": {
-    "success": true,
-    "configs_found": 6371
-  },
-  "https://raw.githubusercontent.com/twj0/subseek/refs/heads/master/data/sub_github.txt": {
-    "success": true,
-    "configs_found": 3506
   },
   "https://raw.githubusercontent.com/sangowd/free_doom/main/kingfu.yaml": {
     "success": true,
     "configs_found": 2045
   },
-  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/vless.json": {
-    "success": true,
-    "configs_found": 8091
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-14.txt": {
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-25.txt": {
     "success": true,
     "configs_found": 10000
   },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-US.txt": {
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub3.txt": {
     "success": true,
-    "configs_found": 327
+    "configs_found": 505
   },
-  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/trojan.json": {
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox.json": {
     "success": true,
-    "configs_found": 1985
+    "configs_found": 4418
   },
   "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub5.txt": {
     "success": true,
     "configs_found": 505
   },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub4.txt": {
+  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/byxiaoxi.txt": {
     "success": true,
-    "configs_found": 505
+    "configs_found": 34
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-24.txt": {
+    "success": true,
+    "configs_found": 10000
   },
   "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-33.txt": {
     "success": true,
     "configs_found": 8335
   },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config_jo.txt": {
+  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/main/Special/Telegram.txt": {
     "success": true,
-    "configs_found": 50
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/vless.txt": {
-    "success": true,
-    "configs_found": 2627
-  },
-  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/sstp-configs/sstp_with_country.txt": {
-    "success": true,
-    "configs_found": 168
-  },
-  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/mtproto.txt": {
-    "success": true,
-    "configs_found": 556
-  },
-  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/mix.json": {
-    "success": true,
-    "configs_found": 11696
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-1.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-20.txt": {
-    "success": true,
-    "configs_found": 3767
-  },
-  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/shadowsocks.txt": {
-    "success": true,
-    "configs_found": 31
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/ss.txt": {
-    "success": true,
-    "configs_found": 20915
-  },
-  "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/WHITE-CIDR-RU-all.txt": {
-    "success": true,
-    "configs_found": 803
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-18.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/vmess_iran.txt": {
-    "success": true,
-    "configs_found": 0
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-NL.txt": {
-    "success": true,
-    "configs_found": 258
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vless.txt": {
-    "success": true,
-    "configs_found": 157
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/ss.txt": {
-    "success": true,
-    "configs_found": 409
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-16.txt": {
-    "success": true,
-    "configs_found": 965
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/sub.txt": {
-    "success": true,
-    "configs_found": 390
-  },
-  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/Best-Results/proxies.txt": {
-    "success": true,
-    "configs_found": 1848
-  },
-  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config-jo.yaml": {
-    "success": true,
-    "configs_found": 796
-  },
-  "https://raw.githubusercontent.com/firefoxmmx2/v2rayshare_subcription/main/subscription/clash_sub.yaml": {
-    "success": true,
-    "configs_found": 415
-  },
-  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/vless.txt": {
-    "success": true,
-    "configs_found": 1
+    "configs_found": 316
   },
   "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-36.txt": {
     "success": true,
     "configs_found": 171
   },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub6.txt": {
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/trojan.txt": {
     "success": true,
-    "configs_found": 505
+    "configs_found": 185
   },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub2.txt": {
+  "https://raw.githubusercontent.com/marshall888666/free_clash_subscribe/main/source/clash-meta-2.yaml": {
     "success": true,
-    "configs_found": 505
+    "configs_found": 10153
   },
-  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/light.txt": {
+  "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt": {
     "success": true,
-    "configs_found": 1
+    "configs_found": 568
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/vl.txt": {
+    "success": true,
+    "configs_found": 25226
+  },
+  "https://raw.githubusercontent.com/Rasoolesp/rasoolesp-sub/refs/heads/main/default.yaml.txt": {
+    "success": true,
+    "configs_found": 877
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-14.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/All_Configs_Sub.txt": {
+    "success": true,
+    "configs_found": 3399
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-week.txt": {
+    "success": true,
+    "configs_found": 1222
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_f2.yaml": {
+    "success": true,
+    "configs_found": 1512
   },
   "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/vmess.json": {
     "success": true,
     "configs_found": 202
   },
-  "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt": {
-    "success": true,
-    "configs_found": 387
-  },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_l.yaml": {
-    "success": true,
-    "configs_found": 1584
-  },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/ss_sub.txt": {
-    "success": true,
-    "configs_found": 1
-  },
-  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/shadowsocks.txt": {
-    "success": true,
-    "configs_found": 384
-  },
-  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/ss_iran.txt": {
-    "success": true,
-    "configs_found": 0
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-6.txt": {
-    "success": true,
-    "configs_found": 10000
-  },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-35.txt": {
-    "success": true,
-    "configs_found": 5047
-  },
-  "https://raw.githubusercontent.com/nyeinkokoaung404/V2ray-Configs/main/All_Configs_Sub.txt": {
-    "success": true,
-    "configs_found": 1017
-  },
-  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/trojan.txt": {
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/trojan_sub.txt": {
     "success": true,
     "configs_found": 1
   },
@@ -547,88 +303,332 @@
     "success": true,
     "configs_found": 10984
   },
-  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox_prx7991.json": {
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/vmess.txt": {
     "success": true,
-    "configs_found": 4401
+    "configs_found": 142
   },
-  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/main/Special/Telegram.txt": {
+  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/vmess.txt": {
     "success": true,
-    "configs_found": 316
-  },
-  "https://raw.githubusercontent.com/snakem982/proxypool/main/source/clash-meta.yaml": {
-    "success": true,
-    "configs_found": 605
-  },
-  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Splitted-By-Protocol/ssr.txt": {
-    "success": true,
-    "configs_found": 7
+    "configs_found": 26
   },
   "https://raw.githubusercontent.com/wenxig/dongtai-sub/refs/heads/main/data/sub.yaml": {
     "success": true,
     "configs_found": 1
   },
-  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/ss.txt": {
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-1.txt": {
     "success": true,
-    "configs_found": 562
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/morteza-v2/free-v2ray-irancell-config/refs/heads/main/Sub1.txt": {
+    "success": true,
+    "configs_found": 66
+  },
+  "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt": {
+    "success": true,
+    "configs_found": 5113
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/mix_sub.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/mtproto.txt": {
+    "success": true,
+    "configs_found": 540
+  },
+  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/vmess.txt": {
+    "success": true,
+    "configs_found": 144
+  },
+  "https://raw.githubusercontent.com/snakem982/proxypool/main/source/clash-meta.yaml": {
+    "success": true,
+    "configs_found": 605
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-11.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/Config-jo.yaml": {
+    "success": true,
+    "configs_found": 765
+  },
+  "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Vless-Reality-White-Lists-Rus-Mobile.txt": {
+    "success": true,
+    "configs_found": 156
   },
   "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/mihomo.yaml": {
     "success": true,
-    "configs_found": 2788
+    "configs_found": 1974
   },
-  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/base64.txt": {
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-4.txt": {
     "success": true,
-    "configs_found": 1
+    "configs_found": 10000
   },
   "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox_l.json": {
     "success": true,
     "configs_found": 4418
   },
-  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/mixed_iran.txt": {
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-28.txt": {
     "success": true,
-    "configs_found": 360
+    "configs_found": 10000
   },
-  "https://raw.githubusercontent.com/marshall888666/free_clash_subscribe/main/source/clash-meta.yaml": {
+  "https://raw.githubusercontent.com/Awmiroosen/awmirx-v2ray/refs/heads/main/blob/main/v2-sub.txt": {
     "success": true,
-    "configs_found": 605
+    "configs_found": 106
+  },
+  "https://raw.githubusercontent.com/twj0/subseek/refs/heads/master/data/sub_github.txt": {
+    "success": true,
+    "configs_found": 3653
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/sub_all.txt": {
+    "success": true,
+    "configs_found": 1368
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vless.txt": {
+    "success": true,
+    "configs_found": 158
+  },
+  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/ss.json": {
+    "success": true,
+    "configs_found": 1847
   },
   "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/trojan.txt": {
     "success": true,
-    "configs_found": 135
+    "configs_found": 90
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-DE.txt": {
+    "success": true,
+    "configs_found": 750
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-18.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/sinavm/SVM/main/subscriptions/singbox/mix.json": {
+    "success": true,
+    "configs_found": 11696
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-12.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/ss_iran.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/mix.txt": {
+    "success": true,
+    "configs_found": 2005
+  },
+  "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/vless.txt": {
+    "success": true,
+    "configs_found": 328
+  },
+  "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/singbox.json": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-7.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt": {
+    "success": true,
+    "configs_found": 522
+  },
+  "https://raw.githubusercontent.com/snakem982/proxypool/main/source/clash-meta-2.yaml": {
+    "success": true,
+    "configs_found": 10153
+  },
+  "https://raw.githubusercontent.com/miraali1372/mirsub/main/subscription.txt": {
+    "success": true,
+    "configs_found": 1447
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/ss.txt": {
+    "success": true,
+    "configs_found": 21072
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/trojan.txt": {
+    "success": true,
+    "configs_found": 227
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub6.txt": {
+    "success": true,
+    "configs_found": 505
   },
   "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/vless_sub.txt": {
     "success": true,
     "configs_found": 1
   },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-3.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/WHITE-CIDR-RU-all.txt": {
+    "success": true,
+    "configs_found": 820
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/sub.txt": {
+    "success": true,
+    "configs_found": 390
+  },
+  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/kooker.jp.txt": {
+    "success": true,
+    "configs_found": 197
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-2.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/vmess_iran.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-34.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-US.txt": {
+    "success": true,
+    "configs_found": 327
+  },
+  "https://raw.githubusercontent.com/firefoxmmx2/v2rayshare_subcription/main/subscription/clash_sub.yaml": {
+    "success": true,
+    "configs_found": 415
+  },
+  "https://raw.githubusercontent.com/hans-thomas/v2ray-subscription/refs/heads/master/servers.txt": {
+    "success": true,
+    "configs_found": 102
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-10.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-27.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-20.txt": {
+    "success": true,
+    "configs_found": 3767
+  },
   "https://raw.githubusercontent.com/Firmfox/proxify/main/v2ray_configs/seperated_by_protocol/vless.txt": {
     "success": true,
-    "configs_found": 4931
+    "configs_found": 4867
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-15.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/marshall888666/free_clash_subscribe/main/source/clash-meta.yaml": {
+    "success": true,
+    "configs_found": 605
   },
   "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/trojan.txt": {
     "success": true,
-    "configs_found": 296
+    "configs_found": 319
   },
-  "https://raw.githubusercontent.com/snakem982/proxypool/main/source/v2ray-2.txt": {
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-9.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/sstp-configs/sstp_with_country.txt": {
+    "success": true,
+    "configs_found": 167
+  },
+  "https://raw.githubusercontent.com/ninjastrikers/Nexus-nodes/main/configs/shadowsocks.txt": {
     "success": true,
     "configs_found": 1
   },
-  "https://raw.githubusercontent.com/kooker/FreeSubsCheck/main/byxiaoxi.txt": {
+  "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/vless_configs.txt": {
     "success": true,
-    "configs_found": 42
+    "configs_found": 18959
   },
   "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml": {
     "success": true,
     "configs_found": 261
   },
-  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/vl.txt": {
+  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/vless.txt": {
     "success": true,
-    "configs_found": 25103
+    "configs_found": 1100
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-13.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/MahanKenway/Freedom-V2Ray/main/configs/ss_sub.txt": {
+    "success": true,
+    "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-17.txt": {
+    "success": true,
+    "configs_found": 4817
+  },
+  "https://raw.githubusercontent.com/twj0/subseek/refs/heads/master/data/sub_platform.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/MustafaBaqer/VestraNet-Nodes/main/protocols/vmess.txt": {
+    "success": true,
+    "configs_found": 1798
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/tr.txt": {
+    "success": true,
+    "configs_found": 12739
   },
   "https://raw.githubusercontent.com/wenxig/dongtai-sub/refs/heads/main/data/sub.txt": {
     "success": true,
     "configs_found": 6
   },
-  "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/singbox.json": {
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/singbox_rs.json": {
+    "success": true,
+    "configs_found": 4342
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-16.txt": {
+    "success": true,
+    "configs_found": 1337
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_l.yaml": {
+    "success": true,
+    "configs_found": 1584
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-8.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/barry-far/V2ray-config/main/All_Configs_base64_Sub.txt": {
     "success": true,
     "configs_found": 1
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_l2.yaml": {
+    "success": true,
+    "configs_found": 1512
+  },
+  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/trojan_iran.txt": {
+    "success": true,
+    "configs_found": 0
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-19.txt": {
+    "success": true,
+    "configs_found": 1193
+  },
+  "https://raw.githubusercontent.com/liketolivefree/kobabi/main/clash_mt_ir_prov_f.yaml": {
+    "success": true,
+    "configs_found": 1584
+  },
+  "https://raw.githubusercontent.com/miladtahanian/Config-Collector/main/mixed_iran.txt": {
+    "success": true,
+    "configs_found": 365
+  },
+  "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/mini/m1n1-5ub-32.txt": {
+    "success": true,
+    "configs_found": 10000
+  },
+  "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/refs/heads/main/splitted-by-protocol/shadowsocks.txt": {
+    "success": true,
+    "configs_found": 367
+  },
+  "https://raw.githubusercontent.com/r3zarahimi/tg-v2ray-configs-every2h/main/conf-UK.txt": {
+    "success": true,
+    "configs_found": 144
   }
 }
